@@ -112,7 +112,7 @@ export default function ToggleButtons() {
           const { base, hover } = color
           const colorClass = isSelected
             ? `text-black dark:text-white ${base} ${hover}`
-            : `bg-transparent border border-muted text-black dark:text-muted-foreground ${hover}`
+            : `bg-transparent border border-gray-400 dark:border-muted text-black dark:text-muted-foreground ${hover}`
 
           return (
             <Tooltip key={key}>

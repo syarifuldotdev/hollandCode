@@ -1,4 +1,6 @@
 import Link from "next/link"
+import { SyaLogo } from "./SyaLogo"
+import { SyaBytesLogo } from "./SyaBytesLogo"
 
 export function SiteFooter() {
     return (
@@ -6,7 +8,7 @@ export function SiteFooter() {
             <div className="text-center text-sm leading-loose text-muted-foreground md:text-left space-y-1">
 
                 <div className="py-3">
-                    Copyright © {new Date().getFullYear()} | Created By <Link href="https://sya.vercel.app" className="underline">Syariful Kamaluddin</Link> | Powered By  <Link href="https://syabytes.vercel.app" className="underline">syaBytes</Link>
+                    <SyaLogo className="text-black dark:text-white inline-block" /> Copyright © {new Date().getFullYear()} | Created By <Link href="https://sya.vercel.app" className="underline">Syariful Kamaluddin</Link> | Powered By  <Link href="https://syabytes.vercel.app" className="underline">syaBytes</Link>
                 </div>
             </div>
 
