@@ -44,6 +44,15 @@ export default function ToggleButtons() {
   const typeList = useTypes()
 
   useEffect(() => {
+    // Show toast on first visit
+    const hasVisited = localStorage.getItem("hasVisited")
+    if (!hasVisited) {
+      toast(t.welcomeMessage || "🎉 Welcome! Pick your top 3 to get started")
+      localStorage.setItem("hasVisited", "true")
+    }
+  }, [])
+
+  useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY)
     if (saved) {
       try {
@@ -134,7 +143,6 @@ export default function ToggleButtons() {
       >
         {t.submit}
       </Button>
-
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent className="w-full max-h-[90vh] overflow-y-auto p-6 rounded-2xl shadow-2xl bg-background text-black dark:text-white transition-colors sm:max-w-[600px] md:max-w-[80vw] xl:max-w-[90vw] mx-auto">
