@@ -14,5 +14,5 @@ export const types = {
         { key: "S", label: "Social" },
         { key: "E", label: "Enterprising" },
         { key: "K", label: "Conventional" },
-    ]
+    ] 
 }

@@ -43,12 +43,6 @@ export default function ToggleButtons() {
   const d: DescriptionMap = useDescriptions()
   const typeList = useTypes()
 
-  useEffect(() => {
-    toast(t.welcomeMessage || "🎉 Welcome! Pick your top 3 to get started")
-  }, [])
-
-
-
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY)
@@ -89,6 +83,18 @@ export default function ToggleButtons() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-8 px-4 bg-background text-black dark:text-white transition-colors duration-300">
+
+      <div className="flex flex-col items-center justify-center text-center">
+        <h1 className="text-4xl font-bold text-primary mb-2">
+          {t.title}
+        </h1>
+        <p className="text-base text-muted-foreground mb-6">
+          {t.tips}
+        </p>
+      </div>
+
+
+      {/* 🎯 Button Grid */}
       <div className="flex flex-wrap justify-center gap-6">
         {typeList.map(({ key, label }) => {
           if (!isValidKey(key)) return null
@@ -131,6 +137,7 @@ export default function ToggleButtons() {
         })}
       </div>
 
+      {/* 🚀 Submit Button */}
       <Button
         onClick={handleSubmit}
         disabled={selected.length !== 3}
@@ -142,6 +149,7 @@ export default function ToggleButtons() {
         {t.submit}
       </Button>
 
+      {/* 📦 Dialog Display */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent className="w-full max-h-[90vh] overflow-y-auto p-6 rounded-2xl shadow-2xl bg-background text-black dark:text-white transition-colors sm:max-w-[600px] md:max-w-[80vw] xl:max-w-[90vw] mx-auto">
           <DialogHeader>
