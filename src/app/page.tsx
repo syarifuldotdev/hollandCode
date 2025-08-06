@@ -128,12 +128,13 @@ export default function ToggleButtons() {
         onClick={handleSubmit}
         disabled={selected.length !== 3}
         className={`px-6 py-3 text-lg font-semibold ${selected.length === 3
-          ? "bg-primary dark:text-primary-foreground hover:bg-primary/80"
-          : "bg-muted dark:text-muted-foreground cursor-not-allowed"
+            ? "bg-primary text-white dark:text-primary-foreground hover:bg-primary/80"
+            : "bg-gray-300 text-gray-700 dark:bg-muted dark:text-muted-foreground cursor-not-allowed"
           }`}
       >
         {t.submit}
       </Button>
+
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent className="w-full max-h-[90vh] overflow-y-auto p-6 rounded-2xl shadow-2xl bg-background text-black dark:text-white transition-colors sm:max-w-[600px] md:max-w-[80vw] xl:max-w-[90vw] mx-auto">
