@@ -19,35 +19,50 @@ import { useTypes } from "@/hooks/useTypes"
 import { useTranslation } from "@/hooks/useTranslation"
 import colorMap from "./colorMap"
 
+type ValidKey = 'R' | 'I' | 'A' | 'S' | 'E' | 'K'
+
+type DescriptionData = {
+  environment: string
+  examples: string
+  traits: string
+}
+
+type DescriptionMap = Record<ValidKey, DescriptionData>
+
 const STORAGE_KEY = "selectedTypes"
 
+function isValidKey(key: string): key is ValidKey {
+  return ['R', 'I', 'A', 'S', 'E', 'K'].includes(key)
+}
+
 export default function ToggleButtons() {
-  const [selected, setSelected] = useState<string[]>([])
+  const [selected, setSelected] = useState<ValidKey[]>([])
   const [showDialog, setShowDialog] = useState(false)
 
   const t = useTranslation()
-  const d = useDescriptions()
+  const d: DescriptionMap = useDescriptions()
   const typeList = useTypes()
 
-  // Load from localStorage
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY)
     if (saved) {
       try {
         const parsed = JSON.parse(saved)
-        if (Array.isArray(parsed)) setSelected(parsed)
+        if (Array.isArray(parsed)) {
+          const valid = parsed.filter(isValidKey)
+          setSelected(valid)
+        }
       } catch {
         console.error("Failed to parse stored types")
       }
     }
   }, [])
 
-  // Save to localStorage
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(selected))
   }, [selected])
 
-  const handleToggle = (key: string) => {
+  const handleToggle = (key: ValidKey) => {
     if (selected.includes(key)) {
       setSelected(selected.filter(k => k !== key))
     } else if (selected.length < 3) {
@@ -67,14 +82,21 @@ export default function ToggleButtons() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-8 px-4 bg-background text-black dark:text-white transition-colors duration-300">
-      {/* Selection Buttons */}
       <div className="flex flex-wrap justify-center gap-6">
         {typeList.map(({ key, label }) => {
+          if (!isValidKey(key)) return null
+
           const index = selected.indexOf(key)
           const isSelected = index !== -1
           const order = isSelected ? index + 1 : null
-          const { base, hover } = colorMap[key]
+          const color = colorMap[key]
 
+          if (!color) {
+            console.warn(`Missing color mapping for key "${key}"`)
+            return null
+          }
+
+          const { base, hover } = color
           const colorClass = isSelected
             ? `text-black dark:text-white ${base} ${hover}`
             : `bg-transparent border border-muted text-black dark:text-muted-foreground ${hover}`
@@ -102,19 +124,17 @@ export default function ToggleButtons() {
         })}
       </div>
 
-      {/* Submit Button */}
       <Button
         onClick={handleSubmit}
         disabled={selected.length !== 3}
         className={`px-6 py-3 text-lg font-semibold ${selected.length === 3
-            ? "bg-primary dark:text-primary-foreground hover:bg-primary/80"
-            : "bg-muted dark:text-muted-foreground cursor-not-allowed"
+          ? "bg-primary dark:text-primary-foreground hover:bg-primary/80"
+          : "bg-muted dark:text-muted-foreground cursor-not-allowed"
           }`}
       >
         {t.submit}
       </Button>
 
-      {/* Results Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent className="w-full max-h-[90vh] overflow-y-auto p-6 rounded-2xl shadow-2xl bg-background text-black dark:text-white transition-colors sm:max-w-[600px] md:max-w-[80vw] xl:max-w-[90vw] mx-auto">
           <DialogHeader>
@@ -124,13 +144,18 @@ export default function ToggleButtons() {
           </DialogHeader>
           <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
             {selected.map((key, index) => {
-              const { base } = colorMap[key]
+              const color = colorMap[key]
               const data = d[key]
+
+              if (!color || !data) {
+                console.warn(`Missing data for key "${key}"`)
+                return null
+              }
 
               return (
                 <div
                   key={key}
-                  className={`min-h-[300px] p-6 rounded-xl shadow-xl ${base} text-white flex flex-col items-start justify-start transition-colors`}
+                  className={`min-h-[300px] p-6 rounded-xl shadow-xl ${color.base} text-white flex flex-col items-start justify-start transition-colors`}
                 >
                   <h3 className="text-3xl font-bold mb-4">
                     {index + 1}. {typeList.find(t => t.key === key)?.label}
