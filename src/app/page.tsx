@@ -44,13 +44,11 @@ export default function ToggleButtons() {
   const typeList = useTypes()
 
   useEffect(() => {
-    // Show toast on first visit
-    const hasVisited = localStorage.getItem("hasVisited")
-    if (!hasVisited) {
-      toast(t.welcomeMessage || "🎉 Welcome! Pick your top 3 to get started")
-      localStorage.setItem("hasVisited", "true")
-    }
+    toast(t.welcomeMessage || "🎉 Welcome! Pick your top 3 to get started")
   }, [])
+
+
+
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY)
@@ -137,8 +135,8 @@ export default function ToggleButtons() {
         onClick={handleSubmit}
         disabled={selected.length !== 3}
         className={`px-6 py-3 text-lg font-semibold ${selected.length === 3
-            ? "bg-primary text-white dark:text-primary-foreground hover:bg-primary/80"
-            : "bg-gray-300 text-gray-700 dark:bg-muted dark:text-muted-foreground cursor-not-allowed"
+          ? "bg-primary text-white dark:text-primary-foreground hover:bg-primary/80"
+          : "bg-gray-300 text-gray-700 dark:bg-muted dark:text-muted-foreground cursor-not-allowed"
           }`}
       >
         {t.submit}
