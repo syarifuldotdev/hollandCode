@@ -4,14 +4,15 @@ import { ReactNode } from "react";
 
 type Props = {
     children: ReactNode;
-    params: { locale: string };
+    params: Promise<{ locale: string }>;
 };
 
 export default async function LocaleLayout({ children, params }: Props) {
-    const messages = await getMessages({ locale: params.locale });
+    const { locale } = await params; // ✅ Await params
+    const messages = await getMessages({ locale });
 
     return (
-        <NextIntlClientProvider locale={params.locale} messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
             {children}
         </NextIntlClientProvider>
     );
