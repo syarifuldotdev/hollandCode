@@ -5,22 +5,18 @@ import colorMap, { ValidKey } from "@/app/constants/colorMap";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useLocale, useTranslations } from "next-intl";
-import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 const STORAGE_KEY = "selectedTypes";
 const KEYS: ValidKey[] = ["R", "I", "A", "S", "E", "K"];
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SUPPORTED_LOCALES = ["en", "ms"] as const;
-type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 export default function Page() {
     const t = useTranslations("common");
     const tTypes = useTranslations("types");
-    const locale = useLocale() as SupportedLocale;
-    const router = useRouter();
-    const pathname = usePathname();
 
     const [selected, setSelected] = useState<ValidKey[]>([]);
     const [showDialog, setShowDialog] = useState(false);
@@ -75,18 +71,6 @@ export default function Page() {
         }
     }, [selected.length, t]);
 
-    const switchLocale = useCallback((next: SupportedLocale) => {
-        if (!next || next === locale) return;
-        const { search, hash } = window.location;
-
-        const parts = pathname.split("/").filter(Boolean);
-        const hasLocaleSegment = SUPPORTED_LOCALES.includes(parts[0] as SupportedLocale);
-        const nextParts = hasLocaleSegment ? [next, ...parts.slice(1)] : [next, ...parts];
-        const nextPath = "/" + nextParts.join("/");
-
-        router.replace(`${nextPath}${search}${hash}`);
-        router.refresh();
-    }, [locale, pathname, router]);
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen gap-8 px-4 bg-background text-black dark:text-white transition-colors overflow-x-hidden">
