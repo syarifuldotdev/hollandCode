@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { SyaLogo } from "./SyaLogo"
-import { SyaBytesLogo } from "./SyaBytesLogo"
 
 export function SiteFooter() {
     return (
