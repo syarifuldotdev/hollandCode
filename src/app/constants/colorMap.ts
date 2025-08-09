@@ -5,6 +5,7 @@ const colorMap: Record<string, { base: string; hover: string }> = {
     S: { base: "bg-green-500", hover: "hover:bg-green-500" },
     E: { base: "bg-yellow-500", hover: "hover:bg-yellow-500" },
     K: { base: "bg-teal-500", hover: "hover:bg-teal-500" },
-};
+}
 
-export default colorMap;
+export type ValidKey = keyof typeof colorMap
+export default colorMap

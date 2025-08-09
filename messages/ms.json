@@ -1,0 +1,71 @@
+{
+  "common": {
+    "welcomeMessage": "🎉 Selamat datang! Pilih 3 kod Holland anda",
+    "submit": "Teruskan",
+    "sumsit": "Teruskan",
+    "tooltip": "Klik untuk pilih",
+    "dialogTitle": "Kod Holland yang anda pilih",
+    "labels": {
+      "environment": "Persekitaran Kerja",
+      "examples": "Contoh Pekerjaan",
+      "traits": "Ciri-ciri Personaliti"
+    },
+    "tooMany": "Anda hanya boleh pilih sehingga 3 kod.",
+    "needThree": "Sila pilih tepat 3 kod sebelum meneruskan.",
+    "title": "Inventori Minat Kerjaya",
+    "tips": "Sila pilih 3 kod Holland anda"
+  },
+  "types": {
+    "R": {
+      "label": "Realistik",
+      "environment": "Kemahiran praktikal dan mekanikal. Suka bekerja dengan objek, peralatan, mesin, haiwan dan tumbuhan.",
+      "examples": "Jurutera, Jurubina, Animator, Pengaturcara Komputer, Juruterbang, Ahli Radiologi, Pustakawan, Juruteknik Elektronik, Chef, Atlet, Ahli Bomba, Pemandu, Tentera, Operator Mesin, Mekanik, Ahli Perkebunan, Pembuat Perabot.",
+      "traits": "Praktikal, mekanikal, materialistik, suka menggunakan alat dan mesin, introvert, patuh, semula jadi, berhemah, tulen, tegas dan berprinsip."
+    },
+    "I": {
+      "label": "Investigatif",
+      "environment": "Kemahiran menyelidik, saintifik, intelektual dan analitikal. Cenderung kepada ketepatan dan pemikiran kritikal.",
+      "examples": "Pegawai Perubatan, Ahli Farmasi, Psikiatri, Ahli Ekonomi, Ahli Kajicuaca, Ahli Biologi, Ahli Botani, Ahli Fizik, Angkasawan, Ahli Antropologi, Guru Sains dan Matematik.",
+      "traits": "Pemerhati, analitikal, rasional, teliti, intelektual, introvert, optimistik, ingin tahu, teoritikal dan tepat."
+    },
+    "A": {
+      "label": "Artistik",
+      "environment": "Persekitaran yang intuitif, ekspresif, bebas dan kreatif. Suka menghasilkan karya yang asli dan inovatif.",
+      "examples": "Arkitek, Penulis Kreatif, Artis, Penggubah Lagu, Pengarang, Pelukis, Wartawan Hiburan, Kartunis, Pereka Grafik, Juruhias Dalaman, Jurufoto.",
+      "traits": "Imaginatif, intuitif, ekspresif, estetika, emosional, introspektif, bebas, sensitif dan idealistik."
+    },
+    "S": {
+      "label": "Sosial",
+      "environment": "Persekitaran yang melibatkan interaksi, kerjasama dan bantuan kepada orang lain. Fokus kepada pendidikan dan kebajikan.",
+      "examples": "Guru, Kaunselor, Pekerja Sosial, Pegawai Perhubungan Awam, Jururawat, Paramedik, Pramugari/Pramugara, Pemandu Pelancong.",
+      "traits": "Mesra, suka menolong, sabar, ekstrovert, empati, bertanggungjawab dan boleh dipercayai."
+    },
+    "E": {
+      "label": "Enterprising",
+      "environment": "Persekitaran pentadbiran, pengurusan, perniagaan dan keusahawanan. Suka memimpin dan mengambil risiko.",
+      "examples": "Usahawan, Pengarah Syarikat, Eksekutif Pemasaran, Peguam, Ahli Politik, Pengurus Bank, Wartawan, Jurujual, Jurulatih.",
+      "traits": "Berwibawa, yakin diri, optimistik, sosial, bercita-cita tinggi, ekstrovert dan petah berbicara."
+    },
+    "K": {
+      "label": "Konvensional",
+      "environment": "Persekitaran yang teratur dan sistematik. Melibatkan kerja data, nombor dan tugas pentadbiran.",
+      "examples": "Kerani, Setiausaha, Akauntan, Pegawai Bank, Juruaudit, Juruwang, Ahli Statistik.",
+      "traits": "Teliti, berdaya tahan, praktikal, berhati-hati, cekap dan suka rutin."
+    }
+  },
+  "wheel": {
+    "wheelTitle": "Roda Kerjaya STEM",
+    "wheelTips": "Putar roda untuk meneroka kerjaya STEM.",
+    "savedType": "Kod pilihan anda:",
+    "spin": "Putar",
+    "spinning": "Sedang berputar...",
+    "shuffle": "Acak",
+    "shuffleSuccess": "Susunan kerjaya telah diacak!",
+    "suitableCodes": "Kod Holland yang sesuai",
+    "matchLabel": "Padanan dengan kod anda",
+    "close": "Tutup",
+    "jobListTitle": "Senarai Kerjaya",
+    "hollandLabel": "Kod Holland:",
+    "searchOnGoogle": "Cari di Google"
+  }
+}

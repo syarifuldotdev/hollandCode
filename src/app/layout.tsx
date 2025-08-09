@@ -1,41 +1,32 @@
-import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
-import "./globals.css"
-import { Toaster } from "@/components/ui/sonner"
+import "@/app/globals.css"
+import Navbar from "@/components/SiteHeader"
 import { ThemeProvider } from "@/context/themeProvider"
-import { LanguageProvider } from "@/context/LanguageContext"
+import { NextIntlClientProvider } from "next-intl"
+import { Toaster } from "@/components/ui/sonner"
 import { SiteFooter } from "@/components/SiteFooter"
-import SiteHeader from "@/components/SiteHeader"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-})
+export default function RootLayout({
+    children
+}: {
+    children: React.ReactNode
+}) {
+    return (
+        <html lang="en" suppressHydrationWarning>
+            <body
+                className="min-h-screen bg-background text-foreground antialiased"
+                suppressHydrationWarning
+            >
+                <ThemeProvider attribute="class">
+                    <NextIntlClientProvider>
+                        <Navbar />
+                        {children}
+                        <SiteFooter/>
+                    </NextIntlClientProvider>
+                </ThemeProvider>
+                <Toaster/>
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-})
 
-export const metadata: Metadata = {
-  title: "HollandCode",
-}
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased transition-colors duration-300 bg-background text-black dark:text-white`}
-      >
-        <LanguageProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <SiteHeader/>
-            {children}
-            <SiteFooter/>
-            <Toaster />
-          </ThemeProvider>
-        </LanguageProvider>
-      </body>
-    </html>
-  )
+            </body>
+        </html>
+    )
 }

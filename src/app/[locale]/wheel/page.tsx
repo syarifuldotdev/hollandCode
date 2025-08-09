@@ -1,24 +1,20 @@
-// app/wheel/page.tsx
+// app/[locale]/wheel/page.tsx
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import colorMap, { ValidKey } from "@/app/constants/colorMap"
 import { Button } from "@/components/ui/button"
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import stemJobs, { StemJob } from "@/data/stemJobs"
+import { useLocale, useTranslations } from "next-intl"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "sonner"
-import stemJobs, { StemJob, ValidKey } from "@/data/stemJobs"
-import colorMap from "../colorMap"
-import { useTranslation } from "@/hooks/useTranslation"
 
 type SelectedTypes = ValidKey[]
 
 const STORAGE_KEY = "selectedTypes"
+const KEYS: ValidKey[] = ["R", "I", "A", "S", "E", "K"]
 
-// Tailwind 500 hex values to match your colorMap classes
+// Tailwind 500 hex values to roughly match colorMap tokens
 const hexByType: Record<ValidKey, string> = {
     R: "#ef4444", // red-500
     I: "#3b82f6", // blue-500
@@ -29,31 +25,37 @@ const hexByType: Record<ValidKey, string> = {
 }
 
 export default function WheelPage() {
-    const t = useTranslation()
+    const t = useTranslations("wheel")
+    const tTypes = useTranslations("types")
+    const locale = useLocale()
+
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
+    const wheelRef = useRef<HTMLDivElement | null>(null)
+
     const [rotation, setRotation] = useState(0) // degrees
     const [spinning, setSpinning] = useState(false)
     const [open, setOpen] = useState(false)
     const [result, setResult] = useState<StemJob | null>(null)
     const [selectedTypes, setSelectedTypes] = useState<SelectedTypes>([])
-    const [jobs, setJobs] = useState<StemJob[]>(() => stemJobs) // you can later allow filtering/slicing
+    const [jobs, setJobs] = useState<StemJob[]>(() => stemJobs)
 
-    // Load user's 3-letter type if they used the main page
+    // Respect reduced motion
+    const prefersReducedMotion =
+        typeof window !== "undefined" &&
+        window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
 
-
+    // Prevent scroll during spin (wheel + touch)
     useEffect(() => {
         const lockScroll = (e: TouchEvent | WheelEvent) => e.preventDefault()
 
         if (spinning) {
             document.body.style.overflow = "hidden"
             document.body.style.touchAction = "none"
-
             window.addEventListener("touchmove", lockScroll, { passive: false })
             window.addEventListener("wheel", lockScroll, { passive: false })
         } else {
             document.body.style.overflow = ""
             document.body.style.touchAction = ""
-
             window.removeEventListener("touchmove", lockScroll)
             window.removeEventListener("wheel", lockScroll)
         }
@@ -61,25 +63,24 @@ export default function WheelPage() {
         return () => {
             document.body.style.overflow = ""
             document.body.style.touchAction = ""
-
             window.removeEventListener("touchmove", lockScroll)
             window.removeEventListener("wheel", lockScroll)
         }
     }, [spinning])
 
-
+    // Load user's saved 3-letter type
     useEffect(() => {
         try {
             const saved = localStorage.getItem(STORAGE_KEY)
             if (!saved) return
             const parsed = JSON.parse(saved)
             if (Array.isArray(parsed)) {
-                const valid = parsed.filter((x: string): x is ValidKey =>
-                    ["R", "I", "A", "S", "E", "K"].includes(x)
-                )
+                const valid = parsed.filter((x: string): x is ValidKey => KEYS.includes(x as ValidKey))
                 setSelectedTypes(valid.slice(0, 3))
             }
-        } catch { }
+        } catch {
+            // ignore parse errors
+        }
     }, [])
 
     const n = jobs.length
@@ -95,11 +96,10 @@ export default function WheelPage() {
 
         const resizeAndDraw = () => {
             const rect = parent.getBoundingClientRect()
-            // Prefer width; only constrain by height if it’s actually set
             const cssSize = Math.max(1, rect.height > 0 ? Math.min(rect.width, rect.height) : rect.width)
             const radius = cssSize / 2
 
-            // Set backing store to DPR-scaled size; keep CSS size at logical pixels
+            // Backing store at DPR size; CSS size stays logical pixels
             canvas.width = Math.floor(cssSize * dpr)
             canvas.height = Math.floor(cssSize * dpr)
             canvas.style.width = `${cssSize}px`
@@ -117,9 +117,10 @@ export default function WheelPage() {
             for (let i = 0; i < n; i++) {
                 const start = startOffset + (i * 2 * Math.PI) / n
                 const end = startOffset + ((i + 1) * 2 * Math.PI) / n
-                const code = jobs[i].hollandCodes?.[0]
-                const fill = hexByType[code] || "#9ca3af"
+                const code = jobs[i].hollandCodes?.[0] as ValidKey | undefined
+                const fill = (code && hexByType[code]) || "#9ca3af"
 
+                // Sector
                 ctx.beginPath()
                 ctx.moveTo(0, 0)
                 ctx.arc(0, 0, radius, start, end)
@@ -127,13 +128,25 @@ export default function WheelPage() {
                 ctx.fillStyle = fill
                 ctx.fill()
 
-                // (Optional) subtle edge pass — cheap and crisp
+                // Separator (radial line)
+                ctx.save()
                 ctx.strokeStyle = "rgba(0,0,0,0.12)"
                 ctx.lineWidth = 1
                 ctx.beginPath()
-                ctx.arc(0, 0, radius, start, start)
+                ctx.moveTo(0, 0)
+                ctx.lineTo(radius * Math.cos(start), radius * Math.sin(start))
                 ctx.stroke()
+                ctx.restore()
             }
+
+            // Outer ring for definition
+            ctx.save()
+            ctx.strokeStyle = "rgba(0,0,0,0.15)"
+            ctx.lineWidth = 1
+            ctx.beginPath()
+            ctx.arc(0, 0, radius - 0.5, 0, 2 * Math.PI)
+            ctx.stroke()
+            ctx.restore()
 
             // Center hub
             ctx.beginPath()
@@ -156,27 +169,23 @@ export default function WheelPage() {
         }
     }, [jobs, n])
 
-
-
     const onSpin = () => {
         if (spinning) return
-        if (n === 0) {
-            toast.error("No jobs available to spin.")
-            return
-        }
+        if (n === 0) return // button is disabled when n === 0; no extra toast key available
         setSpinning(true)
 
         const targetIndex = Math.floor(Math.random() * n)
-        const spins = 4 + Math.floor(Math.random() * 3) // 4–6 full rotations
+        const spins = prefersReducedMotion ? 0 : 4 + Math.floor(Math.random() * 3) // 4–6 rotations
+        const duration = prefersReducedMotion ? 300 : 3200
 
-        // Align the center of targetIndex to the top (pointer) after spinning
+        // Align the center of targetIndex to the top (pointer)
         const final = spins * 360 - (targetIndex + 0.5) * anglePer
 
-        // Smooth ease-out
         const wheelEl = wheelRef.current
         if (!wheelEl) return
-        wheelEl.style.transition = "transform 3.2s cubic-bezier(0.22, 0.61, 0.36, 1)"
-        // Trigger layout before applying transform
+
+        wheelEl.style.transition = `transform ${duration}ms cubic-bezier(0.22, 0.61, 0.36, 1)`
+        // Force reflow before applying transform
         void wheelEl.offsetWidth
 
         setRotation(final)
@@ -184,7 +193,7 @@ export default function WheelPage() {
         const handleEnd = () => {
             wheelEl.removeEventListener("transitionend", handleEnd)
             wheelEl.style.transition = ""
-            // Normalize rotation to avoid huge numbers over time
+            // Normalize rotation
             const normalized = ((final % 360) + 360) % 360
             setRotation(normalized)
 
@@ -193,36 +202,30 @@ export default function WheelPage() {
             setOpen(true)
             setSpinning(false)
         }
+
         wheelEl.addEventListener("transitionend", handleEnd)
     }
-
-    const wheelRef = useRef<HTMLDivElement | null>(null)
 
     const matchCount = useMemo(() => {
         if (!result || selectedTypes.length === 0) return 0
         const set = new Set(selectedTypes)
-        return result.hollandCodes.reduce((acc, c) => acc + (set.has(c) ? 1 : 0), 0)
+        return result.hollandCodes.reduce((acc, c) => acc + (set.has(c as ValidKey) ? 1 : 0), 0)
     }, [result, selectedTypes])
-
-    const codeLabel: Record<ValidKey, string> = {
-        R: "Realistic",
-        I: "Investigative",
-        A: "Artistic",
-        S: "Social",
-        E: "Enterprising",
-        K: "Conventional", // using K in your app
-    }
 
     return (
         <div className="min-h-screen overflow-x-hidden bg-background text-black dark:text-white transition-colors">
+            {/* SR-only live region to announce results (announce job title only) */}
+            <div aria-live="polite" className="sr-only">
+                {open && result ? result.title : ""}
+            </div>
 
             {/* Header */}
             <section className="flex flex-col items-center justify-center gap-3 px-4 py-12 text-center">
-                <h1 className="text-3xl sm:text-4xl font-bold text-primary">{t.wheelTitle}</h1>
-                <p className="text-muted-foreground">{t.wheelTips}</p>
+                <h1 className="text-3xl sm:text-4xl font-bold text-primary">{t("wheelTitle")}</h1>
+                <p className="text-muted-foreground">{t("wheelTips")}</p>
                 {selectedTypes.length === 3 && (
                     <p className="text-sm text-muted-foreground">
-                        {t.savedType} <span className="font-semibold">{selectedTypes.join(" ")}</span>
+                        {t("savedType")} <span className="font-semibold">{selectedTypes.join(" ")}</span>
                     </p>
                 )}
             </section>
@@ -231,21 +234,23 @@ export default function WheelPage() {
             <section className="flex flex-col items-center gap-6">
                 <div className="relative flex justify-center items-center">
                     {/* Pointer */}
-                    <div aria-hidden className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
+                    <div
+                        aria-hidden
+                        className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none"
+                    >
                         <div className="w-0 h-0 border-l-8 border-r-8 border-t-12 border-l-transparent border-r-transparent border-t-rose-500 drop-shadow" />
-
                     </div>
 
                     {/* Rotating wheel */}
                     <div
                         ref={wheelRef}
                         style={{ transform: `rotate(${rotation}deg)` }}
-                        className="mx-auto aspect-square w-[clamp(330px,60vmin,660px)] transition-transform rounded-full shadow-2xl will-change-transform"
+                        className="mx-auto aspect-square w-[clamp(330px,60vmin,660px)] rounded-full shadow-2xl will-change-transform"
                     >
                         <canvas
                             ref={canvasRef}
                             className="w-full h-full rounded-full bg-muted"
-                            aria-label="Career Wheel"
+                            aria-label={t("wheelTitle")}
                         />
                     </div>
                 </div>
@@ -255,14 +260,18 @@ export default function WheelPage() {
                     <Button
                         onClick={onSpin}
                         disabled={spinning || n === 0}
+                        aria-busy={spinning}
+                        aria-disabled={spinning || n === 0}
                         className={spinning ? "opacity-60 cursor-not-allowed" : ""}
                     >
-                        {spinning ? t.spinning : t.spin}
+                        {spinning ? t("spinning") : t("spin")}
                     </Button>
 
                     <Button
                         variant="secondary"
+                        disabled={spinning}
                         onClick={() => {
+                            if (spinning) return
                             setJobs((prev) => {
                                 const copy = [...prev]
                                 for (let i = copy.length - 1; i > 0; i--) {
@@ -271,10 +280,10 @@ export default function WheelPage() {
                                 }
                                 return copy
                             })
-                            toast.success(t.shuffleSuccess)
+                            toast.success(t("shuffleSuccess"))
                         }}
                     >
-                        {t.shuffle}
+                        {t("shuffle")}
                     </Button>
                 </div>
             </section>
@@ -293,18 +302,20 @@ export default function WheelPage() {
                             <p className="leading-relaxed text-base sm:text-lg">{result.description}</p>
 
                             <div className="space-y-3">
-                                <h3 className="font-semibold">{t.suitableCodes}</h3>
+                                <h3 className="font-semibold">{t("suitableCodes")}</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {result.hollandCodes.map((code) => {
-                                        const cls = colorMap[code]
+                                        const c = code as ValidKey
+                                        const cls = colorMap[c]
+                                        const label = tTypes(`${c}.label`)
                                         return (
                                             <span
-                                                key={code}
+                                                key={c}
                                                 className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm text-white ${cls?.base ?? "bg-gray-500"}`}
-                                                title={codeLabel[code]}
+                                                title={label}
                                             >
-                                                <strong>{code}</strong>
-                                                <span className="opacity-90">{codeLabel[code]}</span>
+                                                <strong>{c}</strong>
+                                                <span className="opacity-90">{label}</span>
                                             </span>
                                         )
                                     })}
@@ -312,22 +323,25 @@ export default function WheelPage() {
 
                                 {selectedTypes.length === 3 && (
                                     <p className="text-sm text-muted-foreground">
-                                        {t.matchLabel} ({selectedTypes.join(" ")}):{" "}
+                                        {t("matchLabel")} ({selectedTypes.join(" ")}):{" "}
                                         <span className="font-semibold">{matchCount}/3</span>
                                     </p>
                                 )}
                             </div>
 
                             <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
-                                <Button onClick={() => setOpen(false)}>{t.close}</Button>
+                                <Button autoFocus onClick={() => setOpen(false)}>
+                                    {t("close")}
+                                </Button>
                                 <Button
                                     variant="secondary"
                                     onClick={() => {
                                         const query = encodeURIComponent(result.title)
-                                        window.open(`https://www.google.com/search?q=${query}`, "_blank")
+                                        const hl = typeof locale === "string" ? `&hl=${encodeURIComponent(locale)}` : ""
+                                        window.open(`https://www.google.com/search?q=${query}${hl}`, "_blank", "noopener")
                                     }}
                                 >
-                                    {t.searchOnGoogle ?? "Search on Google"}
+                                    {t("searchOnGoogle")}
                                 </Button>
                             </div>
                         </div>
@@ -339,40 +353,41 @@ export default function WheelPage() {
             <section className="w-full px-4 sm:px-6 lg:px-8 mt-10 mb-10 flex justify-center">
                 <div className="w-full max-w-6xl">
                     <h2 className="text-2xl sm:text-4xl font-semibold mb-4 text-center">
-                        {t.jobListTitle}
+                        {t("jobListTitle")}
                     </h2>
 
                     <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 text-sm">
                         {jobs.map((job) => (
-                            <li
-                                key={job.id}
-                                onClick={() => {
-                                    setResult(job)
-                                    setOpen(true)
-                                }}
-                                role="button"
-                                tabIndex={0}
-                                className="border border-border rounded-lg p-4 hover:bg-muted transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring"
-                            >
-                                <span className="block font-medium text-base">{job.title}</span>
-                                <div className="mt-3 flex flex-wrap gap-2">
-                                    {job.hollandCodes.map((code) => (
-                                        <span
-                                            key={`${job.id}-${code}`}
-                                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs text-white ${colorMap[code]?.base ?? "bg-gray-500"}`}
-                                            title={codeLabel[code]}
-                                        >
-                                            {code}
-                                        </span>
-                                    ))}
-                                </div>
+                            <li key={job.id} className="p-0">
+                                <button
+                                    onClick={() => {
+                                        setResult(job)
+                                        setOpen(true)
+                                    }}
+                                    className="w-full text-left p-4 hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-ring rounded-lg border border-border"
+                                    aria-label={`${job.title}. ${t("suitableCodes")}: ${job.hollandCodes.join(", ")}`}
+                                >
+                                    <span className="block font-medium text-base">{job.title}</span>
+                                    <div className="mt-3 flex flex-wrap gap-2">
+                                        {job.hollandCodes.map((code) => {
+                                            const c = code as ValidKey
+                                            return (
+                                                <span
+                                                    key={`${job.id}-${c}`}
+                                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs text-white ${colorMap[c]?.base ?? "bg-gray-500"}`}
+                                                    title={tTypes(`${c}.label`)}
+                                                >
+                                                    {c}
+                                                </span>
+                                            )
+                                        })}
+                                    </div>
+                                </button>
                             </li>
                         ))}
                     </ul>
                 </div>
             </section>
         </div>
-
-
     )
 }

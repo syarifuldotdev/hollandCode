@@ -1,0 +1,71 @@
+{
+  "common": {
+    "welcomeMessage": "🎉 Welcome! Pick your 3 Holland codes",
+    "submit": "Continue",
+    "sumsit": "Continue",
+    "tooltip": "Click to select",
+    "dialogTitle": "Your Selected Types",
+    "labels": {
+      "environment": "Work Environment",
+      "examples": "Example Jobs",
+      "traits": "Personality Traits"
+    },
+    "tooMany": "You can only select up to 3 codes.",
+    "needThree": "Please select exactly 3 codes before submitting.",
+    "title": "Career Interest Inventory",
+    "tips": "Please choose your 3 Holland codes"
+  },
+  "types": {
+    "R": {
+      "label": "Realistic",
+      "environment": "Practical and mechanical skills. Works with objects, equipment, machines, animals, and plants.",
+      "examples": "Engineer, Builder, Animator, Computer Programmer, Pilot, Radiologist, Librarian, Electronics Technician, Chef, Athlete, Firefighter, Driver, Military Personnel, Machine Operator, Mechanic, Gardener, Furniture Maker.",
+      "traits": "Practical, mechanical, materialistic, enjoys using tools and machines, introverted, compliant, naturalistic, modest, genuine, firm, and principled."
+    },
+    "I": {
+      "label": "Investigative",
+      "environment": "Investigative, scientific, intellectual, analytical, and precision-oriented skills.",
+      "examples": "Medical Officer, Pharmacist, Psychiatrist, Economist, Meteorologist, Biologist, Botanist, Physicist, Astronaut, Anthropologist, Science and Math Teacher.",
+      "traits": "Observant, analytical, rational, meticulous, intellectual, introverted, optimistic, curious, theoretical, and precise."
+    },
+    "A": {
+      "label": "Artistic",
+      "environment": "Highly intuitive, expressive, original, free-spirited, creative, innovative, and artistic.",
+      "examples": "Architect, Creative Writer, Artist, Song Composer, Author, Painter, Entertainment Journalist, Cartoonist, Graphic Designer, Interior Designer, Photographer.",
+      "traits": "Imaginative, intuitive, expressive, aesthetic, emotional, introspective, free, sensitive, and idealistic."
+    },
+    "S": {
+      "label": "Social",
+      "environment": "Interactive, cooperative, helpful, training-focused, and oriented toward altruism.",
+      "examples": "Teacher, Counselor, Social Worker, Public Relations Officer, Nurse, Paramedic, Flight Attendant, Tour Guide.",
+      "traits": "Social, helpful, friendly, patient, extroverted, empathetic, responsible, and trustworthy."
+    },
+    "E": {
+      "label": "Enterprising",
+      "environment": "Administrative, managerial, business, and entrepreneurial settings.",
+      "examples": "Entrepreneur, Company Director, Marketing Executive, Lawyer, Politician, Bank Manager, Journalist, Salesperson, Coach.",
+      "traits": "Leadership, self-confident, optimistic, sociable, ambitious, extroverted, and articulate."
+    },
+    "K": {
+      "label": "Conventional",
+      "environment": "Structured and orderly tasks involving data, numbers, and clerical work.",
+      "examples": "Clerk, Secretary, Accountant, Bank Officer, Auditor, Cashier, Statistician.",
+      "traits": "Meticulous, resilient, practical, careful, efficient, and routine-oriented."
+    }
+  },
+  "wheel": {
+    "wheelTitle": "STEM Career Wheel",
+    "wheelTips": "Spin the wheel to explore a STEM job.",
+    "savedType": "Your saved type:",
+    "spin": "Spin",
+    "spinning": "Spinning...",
+    "shuffle": "Shuffle",
+    "shuffleSuccess": "Shuffled job order!",
+    "suitableCodes": "Suitable Holland codes",
+    "matchLabel": "Match with your type",
+    "close": "Close",
+    "jobListTitle": "Jobs on the Wheel",
+    "hollandLabel": "Holland:",
+    "searchOnGoogle": "Search on Google"
+  }
+}
