@@ -1,22 +1,18 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { ReactNode } from "react";
-import ReloadOnResize from "./ReloadOnResize";
 
 
 type Props = {
     children: ReactNode;
-    params: { locale: string };
+    params: Promise<{ locale: string }> | { locale: string };
 };
 
 export default async function LocaleLayout({ children, params }: Props) {
-    const { locale } = params;
+    const { locale } = await params; // works if it's a plain object or a Promise
     const messages = await getMessages({ locale });
-
     return (
         <NextIntlClientProvider locale={locale} messages={messages}>
-            {/* Mounts client‑only reload logic */}
-            <ReloadOnResize />
             {children}
         </NextIntlClientProvider>
     );
