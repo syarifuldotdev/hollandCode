@@ -4,6 +4,8 @@ import { ThemeProvider } from "@/context/themeProvider"
 import { NextIntlClientProvider } from "next-intl"
 import { Toaster } from "@/components/ui/sonner"
 import { SiteFooter } from "@/components/SiteFooter"
+import { Analytics } from "@vercel/analytics/next"
+
 
 export default function RootLayout({
   children,
@@ -18,6 +20,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class">
           <NextIntlClientProvider locale={params.locale}>
             <Navbar />
+            <Analytics />
             {children}
             <SiteFooter />
           </NextIntlClientProvider>
