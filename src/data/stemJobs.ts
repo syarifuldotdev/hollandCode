@@ -1,526 +1,96 @@
-// data/stemJobs.ts
+// stemJobs.ts
+// Bilingual (English / Bahasa Melayu) dataset of 80 STEM & related technical jobs with Holland Codes
+
 export type ValidKey = 'R' | 'I' | 'A' | 'S' | 'E' | 'K'
 
 export type StemJob = {
     id: number
-    title: string
-    description: string
-    hollandCodes: ValidKey[] // most-to-least dominant
+    title: { en: string; ms: string }
+    description: { en: string; ms: string }
+    hollandCodes: ValidKey[]
 }
 
 const stemJobs: StemJob[] = [
-    {
-        id: 1,
-        title: "Data Scientist",
-        description:
-            "Builds predictive models, mines large datasets, and communicates insights that drive product and business decisions.",
-        hollandCodes: ['I', 'A', 'E']
-    },
-    {
-        id: 2,
-        title: "Software Engineer",
-        description:
-            "Designs, implements, and maintains reliable, scalable software systems across frontend, backend, or full stack.",
-        hollandCodes: ['I', 'R', 'K']
-    },
-    {
-        id: 3,
-        title: "Machine Learning Engineer",
-        description:
-            "Operationalizes ML models, optimizes training/inference, and productionizes pipelines with monitoring and CI/CD.",
-        hollandCodes: ['I', 'R', 'K']
-    },
-    {
-        id: 4,
-        title: "UX Researcher",
-        description:
-            "Plans and runs studies, synthesizes findings, and influences product direction with evidence-based insights.",
-        hollandCodes: ['S', 'A', 'I']
-    },
-    {
-        id: 5,
-        title: "Product Designer (UI/UX)",
-        description:
-            "Crafts end-to-end product experiences, from problem definition and flows to visual design and prototypes.",
-        hollandCodes: ['A', 'E', 'S']
-    },
-    {
-        id: 6,
-        title: "Cybersecurity Analyst",
-        description:
-            "Monitors threats, investigates incidents, and strengthens defenses through policies, tooling, and risk assessment.",
-        hollandCodes: ['R', 'K', 'I']
-    },
-    {
-        id: 7,
-        title: "Cloud Solutions Architect",
-        description:
-            "Designs cloud-native architectures, aligns scalability and cost, and guides teams through migrations and patterns.",
-        hollandCodes: ['I', 'E', 'K']
-    },
-    {
-        id: 8,
-        title: "DevOps Engineer",
-        description:
-            "Automates delivery, builds CI/CD systems, and champions observability, reliability, and developer experience.",
-        hollandCodes: ['R', 'K', 'I']
-    },
-    {
-        id: 9,
-        title: "Robotics Engineer",
-        description:
-            "Designs and builds robotic systems combining mechanics, electronics, and software for real-world tasks.",
-        hollandCodes: ['R', 'I', 'K']
-    },
-    {
-        id: 10,
-        title: "Bioinformatician",
-        description:
-            "Builds computational pipelines to analyze biological data and generate insights for research and healthcare.",
-        hollandCodes: ['I', 'R', 'A']
-    },
-    {
-        id: 11,
-        title: "AR/VR Developer",
-        description:
-            "Creates immersive experiences with 3D engines, interaction design, and real-time performance optimization.",
-        hollandCodes: ['A', 'I', 'R']
-    },
-    {
-        id: 12,
-        title: "Environmental Engineer",
-        description:
-            "Designs sustainable systems to address water, air, and waste challenges with data-driven engineering.",
-        hollandCodes: ['R', 'I', 'S']
-    },
-    {
-        id: 13,
-        title: "Embedded Systems Engineer",
-        description:
-            "Develops firmware and low-level software on constrained devices with real-time guarantees.",
-        hollandCodes: ['R', 'I', 'K']
-    },
-    {
-        id: 14,
-        title: "Game Developer",
-        description:
-            "Builds interactive games combining systems programming, gameplay, tooling, and performance tuning.",
-        hollandCodes: ['A', 'I', 'R']
-    },
-    {
-        id: 15,
-        title: "Data Engineer",
-        description:
-            "Designs and maintains data pipelines, warehouses, and tooling for reliable, high-quality data.",
-        hollandCodes: ['K', 'I', 'R']
-    },
-    {
-        id: 16,
-        title: "Business Intelligence Analyst",
-        description:
-            "Transforms data into dashboards and insights that support decisions across teams and stakeholders.",
-        hollandCodes: ['K', 'E', 'I']
-    },
-    {
-        id: 17,
-        title: "Quality Assurance Engineer",
-        description:
-            "Prevents defects with test strategy, automation, and tooling across the SDLC, focusing on reliability.",
-        hollandCodes: ['K', 'R', 'I']
-    },
-    {
-        id: 18,
-        title: "Network Engineer",
-        description:
-            "Designs and maintains secure, performant networks, troubleshooting connectivity and scaling challenges.",
-        hollandCodes: ['R', 'K', 'I']
-    },
-    {
-        id: 19,
-        title: "AI Product Manager",
-        description:
-            "Aligns ML capabilities with user needs and business outcomes, balancing feasibility, ethics, and risk.",
-        hollandCodes: ['E', 'I', 'S']
-    },
-    {
-        id: 20,
-        title: "Technical Writer",
-        description:
-            "Creates clear documentation, tutorials, and reference guides that empower developers and users.",
-        hollandCodes: ['A', 'S', 'K']
-    },
-    {
-        id: 21,
-        title: "Biomedical Engineer",
-        description:
-            "Applies engineering principles to healthcare technology, designing medical devices, imaging systems, and prosthetics.",
-        hollandCodes: ['R', 'I', 'S']
-    },
-    {
-        id: 22,
-        title: "Astrophysicist",
-        description:
-            "Studies the physical properties of celestial bodies and phenomena using theoretical models and data from observatories.",
-        hollandCodes: ['I', 'R', 'A']
-    },
-    {
-        id: 23,
-        title: "Agricultural Data Analyst",
-        description:
-            "Optimizes farming systems and food production using sensors, geospatial tools, and machine learning.",
-        hollandCodes: ['I', 'E', 'K']
-    },
-    {
-        id: 24,
-        title: "Industrial Designer",
-        description:
-            "Combines aesthetics, user needs, and engineering to design consumer products from electronics to furniture.",
-        hollandCodes: ['A', 'E', 'R']
-    },
-    {
-        id: 25,
-        title: "STEM Educator",
-        description:
-            "Inspires the next generation through hands-on learning, curriculum development, and inclusive classroom strategies.",
-        hollandCodes: ['S', 'A', 'K']
-    },
-    {
-        id: 26,
-        title: "Ecologist",
-        description:
-            "Studies ecosystems and biodiversity, analyzing data and modeling environmental impacts to guide conservation.",
-        hollandCodes: ['I', 'R', 'S']
-    },
-    {
-        id: 27,
-        title: "3D Printing Specialist",
-        description:
-            "Operates and calibrates additive manufacturing equipment to prototype functional parts across industries.",
-        hollandCodes: ['R', 'K', 'A']
-    },
-    {
-        id: 28,
-        title: "Pharmaceutical Chemist",
-        description:
-            "Researches and formulates new drugs through chemical synthesis, testing, and regulatory analysis.",
-        hollandCodes: ['I', 'K', 'S']
-    },
-    {
-        id: 29,
-        title: "Space Systems Engineer",
-        description:
-            "Designs spacecraft subsystems and integrates flight hardware and software for orbital missions.",
-        hollandCodes: ['R', 'I', 'E']
-    },
-    {
-        id: 30,
-        title: "Human Factors Engineer",
-        description:
-            "Improves safety and usability of products and systems by studying user behavior, ergonomics, and interface design.",
-        hollandCodes: ['A', 'S', 'K']
-    },
-    {
-        id: 31,
-        title: "Renewable Energy Technician",
-        description: "Installs and maintains solar, wind, and geothermal energy systems, optimizing performance and sustainability.",
-        hollandCodes: ['R', 'K', 'I']
-    },
-    {
-        id: 32,
-        title: "Marine Biologist",
-        description: "Studies ocean life and ecosystems using fieldwork, lab analysis, and data modeling.",
-        hollandCodes: ['I', 'R', 'S']
-    },
-    {
-        id: 33,
-        title: "AI Ethics Researcher",
-        description: "Explores fairness, accountability, and social impact of artificial intelligence systems.",
-        hollandCodes: ['S', 'I', 'E']
-    },
-    {
-        id: 34,
-        title: "Civil Engineer",
-        description: "Designs infrastructure like roads, bridges, and water systems while ensuring structural integrity and safety.",
-        hollandCodes: ['R', 'K', 'E']
-    },
-    {
-        id: 35,
-        title: "Cognitive Scientist",
-        description: "Studies human cognition and brain processes through experimentation, modeling, and interdisciplinary theory.",
-        hollandCodes: ['I', 'S', 'A']
-    },
-    {
-        id: 36,
-        title: "Aerospace Technician",
-        description: "Builds, tests, and calibrates aircraft and spacecraft components under strict compliance standards.",
-        hollandCodes: ['R', 'K', 'I']
-    },
-    {
-        id: 37,
-        title: "Genetic Counselor",
-        description: "Advises individuals and families on inherited conditions, using genomics and interpersonal communication.",
-        hollandCodes: ['S', 'I', 'K']
-    },
-    {
-        id: 38,
-        title: "Geospatial Analyst",
-        description: "Visualizes and interprets geographic data for urban planning, environmental monitoring, or disaster response.",
-        hollandCodes: ['I', 'K', 'R']
-    },
-    {
-        id: 39,
-        title: "Materials Scientist",
-        description: "Develops new materials with unique properties for manufacturing, electronics, or medicine.",
-        hollandCodes: ['I', 'R', 'K']
-    },
-    {
-        id: 40,
-        title: "Medical Imaging Technologist",
-        description: "Operates MRI, CT, and ultrasound equipment to assist diagnosis and treatment planning.",
-        hollandCodes: ['R', 'S', 'K']
-    },
-    {
-        id: 41,
-        title: "Transportation Systems Analyst",
-        description: "Improves mobility networks and public transit using data modeling and simulation tools.",
-        hollandCodes: ['K', 'I', 'E']
-    },
-    {
-        id: 42,
-        title: "Chemistry Lab Technician",
-        description: "Prepares samples, runs tests, and records results to support chemical research or manufacturing.",
-        hollandCodes: ['K', 'R', 'I']
-    },
-    {
-        id: 43,
-        title: "STEM Curriculum Developer",
-        description: "Designs engaging learning experiences and resources for science, tech, and math education.",
-        hollandCodes: ['A', 'S', 'K']
-    },
-    {
-        id: 44,
-        title: "Blockchain Developer",
-        description: "Creates secure decentralized applications and smart contracts for finance, logistics, or identity.",
-        hollandCodes: ['K', 'I', 'R']
-    },
-    {
-        id: 45,
-        title: "Environmental Scientist",
-        description: "Conducts field studies and lab tests to address pollution, climate, and ecosystem health.",
-        hollandCodes: ['I', 'R', 'S']
-    },
-    {
-        id: 46,
-        title: "Design Engineer",
-        description: "Solves engineering problems by blending technical function with aesthetic form and user context.",
-        hollandCodes: ['A', 'R', 'K']
-    },
-    {
-        id: 47,
-        title: "Medical Roboticist",
-        description: "Designs and programs robotic systems for surgery, rehabilitation, and patient care.",
-        hollandCodes: ['R', 'I', 'S']
-    },
-    {
-        id: 48,
-        title: "AI Prompt Engineer",
-        description: "Optimizes natural language interactions and model outputs using data tuning and tooling.",
-        hollandCodes: ['I', 'K', 'A']
-    },
-    {
-        id: 49,
-        title: "Hydrologist",
-        description: "Analyzes water movement, quality, and distribution to support sustainable environmental planning.",
-        hollandCodes: ['I', 'R', 'K']
-    },
-    {
-        id: 50,
-        title: "Packaging Engineer",
-        description: "Designs product packaging to meet logistical, aesthetic, and sustainability constraints.",
-        hollandCodes: ['A', 'R', 'K']
-    },
-    {
-        id: 51,
-        title: "Health Informatics Specialist",
-        description: "Manages medical data systems and electronic health records to improve patient care workflows.",
-        hollandCodes: ['K', 'S', 'I']
-    },
-    {
-        id: 52,
-        title: "Quantum Computing Researcher",
-        description: "Explores quantum algorithms and error correction methods for next-gen computation.",
-        hollandCodes: ['I', 'R', 'K']
-    },
-    {
-        id: 53,
-        title: "Forensic Analyst",
-        description: "Processes evidence using lab tools and investigative logic to assist criminal investigations.",
-        hollandCodes: ['R', 'I', 'S']
-    },
-    {
-        id: 54,
-        title: "Product Manager (Tech)",
-        description: "Defines roadmap, coordinates cross-functional teams, and ensures product-market fit.",
-        hollandCodes: ['E', 'K', 'A']
-    },
-    {
-        id: 55,
-        title: "Bioengineer",
-        description: "Applies biology and engineering to design tissue scaffolds, drug delivery systems, and biosensors.",
-        hollandCodes: ['R', 'I', 'S']
-    },
-    {
-        id: 56,
-        title: "Manufacturing Process Engineer",
-        description: "Improves efficiency, quality, and safety in factory workflows using lean principles and automation.",
-        hollandCodes: ['K', 'R', 'I']
-    },
-    {
-        id: 57,
-        title: "AI Research Scientist",
-        description: "Explores foundational algorithms, model architectures, and optimization techniques in machine intelligence.",
-        hollandCodes: ['I', 'K', 'A']
-    },
-    {
-        id: 58,
-        title: "Climate Data Analyst",
-        description: "Models environmental trends and forecasts using satellite and sensor datasets.",
-        hollandCodes: ['I', 'R', 'K']
-    },
-    {
-        id: 59,
-        title: "Industrial Automation Engineer",
-        description: "Designs systems that control manufacturing equipment and robotic processes with precision.",
-        hollandCodes: ['R', 'K', 'I']
-    },
-    {
-        id: 60,
-        title: "Educational Technologist",
-        description: "Integrates tech into learning environments and supports teachers with platforms and training.",
-        hollandCodes: ['S', 'K', 'A']
-    },
-    {
-        id: 61,
-        title: "Nuclear Engineer",
-        description: "Designs and maintains systems for nuclear energy generation and safety protocols.",
-        hollandCodes: ['R', 'K', 'I']
-    },
-    {
-        id: 62,
-        title: "Lab Manager",
-        description: "Oversees research operations, compliance, and team coordination in technical labs.",
-        hollandCodes: ['K', 'E', 'S']
-    },
-    {
-        id: 63,
-        title: "Computational Linguist",
-        description: "Develops algorithms that parse, translate, and generate natural language using AI.",
-        hollandCodes: ['I', 'A', 'K']
-    },
-    {
-        id: 64,
-        title: "Food Technologist",
-        description: "Applies chemistry and biology to develop safe, nutritious, and shelf-stable food products.",
-        hollandCodes: ['K', 'R', 'I']
-    },
-    {
-        id: 65,
-        title: "Optical Engineer",
-        description: "Designs lenses and light systems for devices from cameras to microscopes to laser tech.",
-        hollandCodes: ['R', 'I', 'K']
-    },
-    {
-        id: 66,
-        title: "STEM Policy Analyst",
-        description: "Advises on public funding, education reform, and innovation strategies based on research data.",
-        hollandCodes: ['E', 'K', 'I']
-    },
-    {
-        id: 67,
-        title: "Digital Accessibility Specialist",
-        description: "Improves UX design for users with disabilities through standards, audits, and inclusive tooling.",
-        hollandCodes: ['S', 'A', 'K']
-    },
-    {
-        id: 68,
-        title: "Nanotechnologist",
-        description: "Manipulates materials at the atomic scale to build devices and enhance chemical processes.",
-        hollandCodes: ['I', 'R', 'K']
-    },
-    {
-        id: 69,
-        title: "Augmented Reality Experience Designer",
-        description: "Creates immersive interactions for mobile and headset-based AR platforms.",
-        hollandCodes: ['A', 'I', 'E']
-    },
-    {
-        id: 70,
-        title: "GIS Developer",
-        description: "Builds geospatial applications and mapping tools for environmental, logistics, or civic use.",
-        hollandCodes: ['K', 'I', 'R']
-    },
-    {
-        id: 71,
-        title: "Tech Policy Advisor",
-        description: "Shapes legislation around emerging technologies by blending data analysis, legal insights, and ethics.",
-        hollandCodes: ['E', 'S', 'I']
-    },
-    {
-        id: 72,
-        title: "Drone Systems Engineer",
-        description: "Designs unmanned aerial vehicles and automates navigation and sensing systems.",
-        hollandCodes: ['R', 'I', 'K']
-    },
-    {
-        id: 73,
-        title: "Computational Biologist",
-        description: "Analyzes biological systems using algorithms, simulations, and big data techniques.",
-        hollandCodes: ['I', 'K', 'A']
-    },
-    {
-        id: 74,
-        title: "Visual Data Journalist",
-        description: "Creates compelling stories by merging investigative writing with interactive data visualizations.",
-        hollandCodes: ['A', 'S', 'I']
-    },
-    {
-        id: 75,
-        title: "Water Resources Engineer",
-        description: "Develops sustainable water supply systems, drainage, and flood mitigation infrastructure.",
-        hollandCodes: ['R', 'I', 'K']
-    },
-    {
-        id: 76,
-        title: "Digital Twin Engineer",
-        description: "Creates virtual replicas of systems for testing, simulation, and predictive maintenance.",
-        hollandCodes: ['I', 'R', 'K']
-    },
-    {
-        id: 77,
-        title: "Biostatistician",
-        description: "Applies statistical models to interpret medical and biological research data.",
-        hollandCodes: ['K', 'I', 'S']
-    },
-    {
-        id: 78,
-        title: "Technical Illustrator",
-        description: "Draws detailed diagrams and graphics to communicate complex concepts in science and engineering.",
-        hollandCodes: ['A', 'K', 'R']
-    },
-    {
-        id: 79,
-        title: "Clean Tech Consultant",
-        description: "Advises on sustainable technologies and energy systems for business or government.",
-        hollandCodes: ['E', 'I', 'R']
-    },
-    {
-        id: 80,
-        title: "Neuroscience Lab Technician",
-        description: "Supports experiments and data collection on brain function using lab equipment and protocols.",
-        hollandCodes: ['I', 'K', 'R']
-    }
-
-
+    { id: 1, title: { en: "Data Scientist", ms: "Saintis Data" }, description: { en: "Builds predictive models, mines large datasets, and communicates insights to stakeholders.", ms: "Membangunkan model ramalan, menganalisis set data berskala besar, dan menyampaikan penemuan kepada pihak berkepentingan." }, hollandCodes: ["I", "A", "E"] },
+    { id: 2, title: { en: "Software Engineer", ms: "Jurutera Perisian" }, description: { en: "Designs, develops, tests, and maintains software applications and systems.", ms: "Mereka bentuk, membangunkan, menguji dan menyelenggara aplikasi serta sistem perisian." }, hollandCodes: ["I", "A", "R"] },
+    { id: 3, title: { en: "Machine Learning Engineer", ms: "Jurutera Pembelajaran Mesin" }, description: { en: "Implements machine learning models in production, optimises pipelines, and monitors model performance.", ms: "Melaksanakan model pembelajaran mesin dalam persekitaran produksi, mengoptimumkan saluran data, dan memantau prestasi model." }, hollandCodes: ["I", "R", "A"] },
+    { id: 4, title: { en: "Data Engineer", ms: "Jurutera Data" }, description: { en: "Builds and maintains data pipelines, ETL processes, and data warehouses for analytics.", ms: "Mereka dan menyelenggara saluran data, proses ETL, serta gudang data untuk keperluan analitik." }, hollandCodes: ["I", "R", "K"] },
+    { id: 5, title: { en: "DevOps Engineer", ms: "Jurutera DevOps" }, description: { en: "Automates deployments, manages CI/CD, and maintains system reliability and scalability.", ms: "Mengautomasikan penerapan, mengurus aliran CI/CD, dan memastikan kebolehpercayaan serta kebolehskalaan sistem." }, hollandCodes: ["R", "I", "K"] },
+    { id: 6, title: { en: "AI Researcher", ms: "Penyelidik Kecerdasan Buatan" }, description: { en: "Conducts fundamental research in artificial intelligence and publishes new algorithms and findings.", ms: "Menjalankan penyelidikan asas dalam kecerdasan buatan, membangunkan algoritma baru, dan menerbitkan penemuan saintifik." }, hollandCodes: ["R", "I", "K"] },
+    { id: 7, title: { en: "Bioinformatician", ms: "Ahli Bioinformatik" }, description: { en: "Applies computational methods to biological data such as genomes and proteomes for insights.", ms: "Mengaplikasikan kaedah pengkomputeran kepada data biologi seperti genom dan proteom untuk menghasilkan penemuan bermakna." }, hollandCodes: ["I", "R", "K"] },
+    { id: 8, title: { en: "Biomedical Engineer", ms: "Jurutera Bioperubatan" }, description: { en: "Designs medical devices, prosthetics, and equipment that solve clinical problems.", ms: "Mereka bentuk peranti perubatan, prostetik dan peralatan yang menyelesaikan masalah klinikal." }, hollandCodes: ["I", "R", "E"] },
+    { id: 9, title: { en: "Environmental Scientist", ms: "Saintis Alam Sekitar" }, description: { en: "Studies ecosystems, assesses environmental impact, and recommends conservation measures.", ms: "Mengkaji ekosistem, menilai impak alam sekitar dan mencadangkan langkah pemuliharaan yang berasas." }, hollandCodes: ["I", "S", "R"] },
+    { id: 10, title: { en: "Civil Engineer", ms: "Jurutera Awam" }, description: { en: "Plans, designs, and oversees construction of infrastructure such as roads, bridges, and buildings.", ms: "Merancang dan mereka bentuk infrastruktur seperti jalan, jambatan dan bangunan serta menyelia pelaksanaannya." }, hollandCodes: ["R", "E", "K"] },
+    { id: 11, title: { en: "Chemical Engineer", ms: "Jurutera Kimia" }, description: { en: "Develops processes to convert raw materials into useful products safely and efficiently.", ms: "Membangunkan proses untuk menukar bahan mentah kepada produk berguna secara selamat dan cekap." }, hollandCodes: ["R", "I", "E"] },
+    { id: 12, title: { en: "Electrical Engineer", ms: "Jurutera Elektrik" }, description: { en: "Designs and tests electrical systems, circuits, and power distribution networks.", ms: "Mereka dan menguji sistem elektrik, litar dan rangkaian pengagihan kuasa." }, hollandCodes: ["R", "E", "I"] },
+    { id: 13, title: { en: "Robotics Engineer", ms: "Jurutera Robotik" }, description: { en: "Designs robotic systems, integrates sensors and actuators, and programs control software.", ms: "Mereka sistem robotik, mengintegrasikan penderia dan penggerak serta membangunkan perisian kawalan." }, hollandCodes: ["I", "R", "K"] },
+    { id: 14, title: { en: "UX Designer", ms: "Pereka Pengalaman Pengguna (UX)" }, description: { en: "Creates user-centred designs, prototypes, and conducts usability testing to improve products.", ms: "Mereka pengalaman pengguna berasaskan keperluan pengguna, menyediakan prototaip, dan menjalankan ujian kebolehgunaan untuk menaik taraf produk." }, hollandCodes: ["A", "I", "E"] },
+    { id: 15, title: { en: "Product Manager", ms: "Pengurus Produk" }, description: { en: "Defines product vision, prioritises features, and coordinates cross-functional teams to deliver value.", ms: "Menetapkan visi produk, mengutamakan ciri, dan menyelaras pasukan merentas fungsi untuk menyampaikan nilai kepada pengguna." }, hollandCodes: ["E", "A", "I"] },
+    { id: 16, title: { en: "Cybersecurity Analyst", ms: "Penganalisis Keselamatan Siber" }, description: { en: "Monitors systems for security incidents, performs vulnerability assessments, and responds to threats.", ms: "Memantau sistem bagi insiden keselamatan, menjalankan penilaian kerentanan dan bertindak balas terhadap ancaman siber." }, hollandCodes: ["R", "I", "K"] },
+    { id: 17, title: { en: "Cloud Architect", ms: "Arkitek Awan" }, description: { en: "Designs cloud infrastructure and solutions, ensuring scalability, security, and cost efficiency.", ms: "Merancang infrastruktur awan dan penyelesaian berasaskan awan dengan tumpuan kepada kebolehskalaan, keselamatan dan keberkesanan kos." }, hollandCodes: ["I", "E", "R"] },
+    { id: 18, title: { en: "Network Engineer", ms: "Jurutera Rangkaian" }, description: { en: "Implements and maintains network hardware and protocols to ensure connectivity and performance.", ms: "Melaksanakan dan menyelenggara perkakasan serta protokol rangkaian untuk memastikan sambungan dan prestasi yang baik." }, hollandCodes: ["R", "I", "K"] },
+    { id: 19, title: { en: "Statistician", ms: "Ahli Statistik" }, description: { en: "Designs studies, analyses data, and helps convert numerical results into actionable conclusions.", ms: "Merancang kajian, menganalisis data dan menukar keputusan berangka kepada kesimpulan yang boleh digunapakai." }, hollandCodes: ["I", "R", "K"] },
+    { id: 20, title: { en: "Laboratory Technician", ms: "Juruteknik Makmal" }, description: { en: "Supports experiments, prepares samples, and maintains lab equipment and records.", ms: "Menyokong eksperimen, menyediakan sampel, dan menyelenggara peralatan serta rekod makmal." }, hollandCodes: ["R", "I", "K"] },
+    { id: 21, title: { en: "Research Scientist", ms: "Penyelidik Saintifik" }, description: { en: "Leads scientific investigations, publishes results, and advances knowledge in a specific field.", ms: "Menerajui penyiasatan saintifik, menerbitkan hasil penyelidikan dan memajukan pengetahuan dalam bidang khusus." }, hollandCodes: ["R", "I", "K"] },
+    { id: 22, title: { en: "QA Engineer", ms: "Jurutera Jaminan Kualiti" }, description: { en: "Designs test plans, automates test suites, and ensures software quality before release.", ms: "Merancang pelan ujian, mengautomasikan set ujian dan memastikan kualiti perisian sebelum pelancaran." }, hollandCodes: ["R", "I", "K"] },
+    { id: 23, title: { en: "Mobile Developer", ms: "Pembangun Aplikasi Mudah Alih" }, description: { en: "Builds applications for mobile platforms, optimises performance, and ensures good UX on devices.", ms: "Membangunkan aplikasi untuk platform mudah alih, mengoptimumkan prestasi dan memastikan pengalaman pengguna (UX) yang baik pada peranti." }, hollandCodes: ["I", "A", "R"] },
+    { id: 24, title: { en: "Systems Analyst", ms: "Penganalisis Sistem" }, description: { en: "Analyses business requirements, defines system specifications, and helps implement IT solutions.", ms: "Menganalisis keperluan perniagaan, menentukan spesifikasi sistem dan membantu pelaksanaan penyelesaian IT." }, hollandCodes: ["E", "I", "K"] },
+    { id: 25, title: { en: "Front-end Developer", ms: "Pembangun Antara Muka" }, description: { en: "Implements user interfaces, ensures responsive design, and collaborates with designers.", ms: "Melaksanakan antara muka pengguna, memastikan reka bentuk responsif, dan bekerjasama rapat dengan pereka." }, hollandCodes: ["A", "I", "K"] },
+    { id: 26, title: { en: "Back-end Developer", ms: "Pembangun Pelayan" }, description: { en: "Develops server-side logic, APIs, and database interactions for applications.", ms: "Membangunkan logik sisi pelayan, API dan pengurusan interaksi pangkalan data untuk aplikasi." }, hollandCodes: ["I", "R", "K"] },
+    { id: 27, title: { en: "Full-stack Developer", ms: "Pembangun Tumpukan Penuh (Full‑stack)" }, description: { en: "Works across front-end and back-end to deliver complete applications.", ms: "Bekerja merentasi antara muka pengguna dan pelayan untuk menghasilkan aplikasi menyeluruh." }, hollandCodes: ["I", "A", "R"] },
+    { id: 28, title: { en: "Database Administrator", ms: "Pentadbir Pangkalan Data" }, description: { en: "Manages database installations, performance tuning, backups, and security.", ms: "Mengurus pemasangan pangkalan data, pelarasan prestasi, sandaran dan keselamatan." }, hollandCodes: ["K", "R", "I"] },
+    { id: 29, title: { en: "Game Developer", ms: "Pembangun Permainan" }, description: { en: "Designs and implements game mechanics, graphics, and gameplay systems.", ms: "Mereka dan melaksanakan mekanik permainan, grafik serta sistem permainan." }, hollandCodes: ["A", "I", "R"] },
+    { id: 30, title: { en: "Embedded Systems Engineer", ms: "Jurutera Sistem Terbenam" }, description: { en: "Develops firmware and integrates hardware for real-time embedded devices.", ms: "Membangunkan firmware dan mengintegrasikan perkakasan untuk peranti terbenam masa nyata." }, hollandCodes: ["R", "I", "K"] },
+    { id: 31, title: { en: "Firmware Engineer", ms: "Jurutera Firmware" }, description: { en: "Writes low-level code that interacts closely with hardware components.", ms: "Menulis kod aras rendah yang berinteraksi rapat dengan komponen perkakasan." }, hollandCodes: ["R", "I", "K"] },
+    { id: 32, title: { en: "Hardware Engineer", ms: "Jurutera Perkakasan" }, description: { en: "Designs and tests electronic circuits, PCBs, and hardware prototypes.", ms: "Mereka dan menguji litar elektronik, papan litar bercetak (PCB) dan prototaip perkakasan." }, hollandCodes: ["R", "I", "K"] },
+    { id: 33, title: { en: "Electronics Technician", ms: "Juruteknik Elektronik" }, description: { en: "Installs, troubleshoots, and repairs electronic equipment and instruments.", ms: "Memasang, menyelesaikan masalah dan membaiki peralatan serta instrumen elektronik." }, hollandCodes: ["R", "K", "I"] },
+    { id: 34, title: { en: "Optical Engineer", ms: "Jurutera Optik" }, description: { en: "Designs optical systems, lenses, and imaging devices for various applications.", ms: "Mereka sistem optik, lensa dan peranti pengimejan untuk pelbagai aplikasi." }, hollandCodes: ["R", "I", "K"] },
+    { id: 35, title: { en: "Acoustical Engineer", ms: "Jurutera Akustik" }, description: { en: "Analyses sound propagation, designs noise control solutions, and acoustic materials.", ms: "Menganalisis perambatan bunyi, mereka penyelesaian kawalan bunyi dan memilih bahan akustik sesuai." }, hollandCodes: ["R", "I", "A"] },
+    { id: 36, title: { en: "Materials Scientist", ms: "Saintis Bahan" }, description: { en: "Studies properties of materials and develops new materials for engineering uses.", ms: "Mengkaji sifat bahan dan membangunkan bahan baharu untuk kegunaan kejuruteraan." }, hollandCodes: ["R", "I", "K"] },
+    { id: 37, title: { en: "Nanotechnologist", ms: "Ahli Nanoteknologi" }, description: { en: "Works with materials at the nanoscale to create novel devices and materials.", ms: "Bekerja pada skala nano untuk mencipta peranti dan bahan inovatif." }, hollandCodes: ["R", "I", "K"] },
+    { id: 38, title: { en: "Computational Chemist", ms: "Ahli Kimia Pengkomputeran" }, description: { en: "Uses simulations to model chemical processes and predict molecular behaviour.", ms: "Menggunakan simulasi untuk memodelkan proses kimia dan meramalkan tingkah laku molekul." }, hollandCodes: ["I", "R", "K"] },
+    { id: 39, title: { en: "Pharmacologist", ms: "Ahli Farmakologi" }, description: { en: "Studies drug actions, safety, and efficacy to guide therapeutic use.", ms: "Mengkaji tindakan ubat, keselamatan dan keberkesanan bagi membimbing penggunaan terapeutik." }, hollandCodes: ["I", "R", "S"] },
+    { id: 40, title: { en: "Clinical Research Coordinator", ms: "Penyelaras Penyelidikan Klinikal" }, description: { en: "Organises clinical trials, ensures regulatory compliance, and manages data collection.", ms: "Menganjurkan ujian klinikal, memastikan pematuhan peraturan dan mengurus pengumpulan data penyelidikan." }, hollandCodes: ["S", "K", "I"] },
+    { id: 41, title: { en: "Epidemiologist", ms: "Epidemiologi" }, description: { en: "Studies disease patterns, risk factors, and designs public health interventions.", ms: "Mengkaji corak penyakit, faktor risiko dan merancang intervensi kesihatan awam." }, hollandCodes: ["I", "S", "R"] },
+    { id: 42, title: { en: "Public Health Scientist", ms: "Saintis Kesihatan Awam" }, description: { en: "Evaluates population health data and recommends policies to improve community health.", ms: "Menilai data kesihatan populasi dan mencadangkan dasar untuk memperbaiki kesihatan komuniti." }, hollandCodes: ["S", "I", "E"] },
+    { id: 43, title: { en: "Food Scientist", ms: "Saintis Makanan" }, description: { en: "Develops food products, improves shelf life, and ensures safety and quality control.", ms: "Membangunkan produk makanan, mempertingkatkan jangka hayat dan memastikan kawalan keselamatan serta kualiti." }, hollandCodes: ["R", "I", "K"] },
+    { id: 44, title: { en: "Agricultural Engineer", ms: "Jurutera Pertanian" }, description: { en: "Designs farming equipment, improves irrigation systems, and optimises agricultural processes.", ms: "Mereka peralatan pertanian, menambahbaik sistem pengairan dan mengoptimumkan proses pertanian." }, hollandCodes: ["R", "E", "I"] },
+    { id: 45, title: { en: "Horticulturalist", ms: "Ahli Hortikultur" }, description: { en: "Cultivates plants, researches crop improvement, and manages greenhouse systems.", ms: "Menanam dan mengurus tanaman, menjalankan penyelidikan penambahbaikan hasil, serta mengendalikan sistem rumah hijau." }, hollandCodes: ["S", "R", "I"] },
+    { id: 46, title: { en: "Geologist", ms: "Ahli Geologi" }, description: { en: "Studies the Earth's structure, mineral resources, and geological hazards.", ms: "Mengkaji struktur Bumi, sumber mineral dan bahaya geologi." }, hollandCodes: ["R", "I", "K"] },
+    { id: 47, title: { en: "Geophysicist", ms: "Ahli Geofizik" }, description: { en: "Uses physical methods to study Earth's interior, seismic activity, and resources.", ms: "Menggunakan kaedah fizikal untuk mengkaji bahagian dalaman Bumi, aktiviti seismik dan sumber semula jadi." }, hollandCodes: ["I", "R", "K"] },
+    { id: 48, title: { en: "Petroleum Engineer", ms: "Jurutera Petroleum" }, description: { en: "Designs methods for extracting oil and gas efficiently and safely.", ms: "Mereka dan melaksanakan kaedah untuk mengekstrak minyak dan gas dengan selamat serta cekap." }, hollandCodes: ["R", "E", "I"] },
+    { id: 49, title: { en: "Aerospace Engineer", ms: "Jurutera Aeroangkasa" }, description: { en: "Designs aircraft, spacecraft, and studies aerodynamics and flight systems.", ms: "Mereka pesawat dan kenderaan angkasa, serta mengkaji aerodinamik dan sistem penerbangan." }, hollandCodes: ["R", "I", "K"] },
+    { id: 50, title: { en: "Avionics Engineer", ms: "Jurutera Avionik" }, description: { en: "Develops aircraft electronic systems, navigation, and communication equipment.", ms: "Membangunkan sistem elektronik pesawat, sistem navigasi dan peralatan komunikasi." }, hollandCodes: ["R", "I", "K"] },
+    { id: 51, title: { en: "Astronomer", ms: "Astronom" }, description: { en: "Studies celestial objects, collects observational data, and models astronomical phenomena.", ms: "Mengkaji objek cakerawala, mengumpul data pemerhatian dan memodelkan fenomena astronomi." }, hollandCodes: ["I", "R", "K"] },
+    { id: 52, title: { en: "Astrophysicist", ms: "Ahli Astrofizik" }, description: { en: "Applies physics to understand the universe, stars, and cosmological processes.", ms: "Mengaplikasikan prinsip fizik untuk memahami alam semesta, bintang dan proses kosmologi." }, hollandCodes: ["I", "R", "K"] },
+    { id: 53, title: { en: "Oceanographer", ms: "Ahli Oseanografi" }, description: { en: "Studies oceans, marine ecosystems, currents, and coasts for science and resource management.", ms: "Mengkaji lautan, ekosistem marin, arus dan pantai untuk tujuan sains serta pengurusan sumber laut." }, hollandCodes: ["I", "S", "R"] },
+    { id: 54, title: { en: "Hydrologist", ms: "Ahli Hidrologi" }, description: { en: "Studies water cycles, groundwater, and designs flood mitigation and water management plans.", ms: "Mengkaji kitaran air, sumber air bawah tanah dan merangka rancangan mitigasi banjir serta pengurusan sumber air." }, hollandCodes: ["I", "R", "K"] },
+    { id: 55, title: { en: "Meteorologist", ms: "Ahli Meteorologi" }, description: { en: "Forecasts weather, studies atmospheric processes, and issues warnings for severe events.", ms: "Meramal cuaca, mengkaji proses atmosfera dan mengeluarkan amaran untuk kejadian cuaca melampau." }, hollandCodes: ["I", "R", "K"] },
+    { id: 56, title: { en: "Climatologist", ms: "Ahli Klimatologi" }, description: { en: "Studies long-term climate patterns, models climate change and advises mitigation strategies.", ms: "Mengkaji corak iklim jangka panjang, memodelkan perubahan iklim dan mencadangkan strategi mitigasi." }, hollandCodes: ["I", "R", "E"] },
+    { id: 57, title: { en: "Renewable Energy Engineer", ms: "Jurutera Tenaga Boleh Diperbaharui" }, description: { en: "Designs and implements solar, wind, and other renewable energy systems.", ms: "Merancang dan melaksanakan sistem tenaga boleh diperbaharui seperti solar dan angin." }, hollandCodes: ["R", "E", "I"] },
+    { id: 58, title: { en: "Solar Engineer", ms: "Jurutera Solar" }, description: { en: "Designs photovoltaic installations, optimises panel layouts, and improves energy yield.", ms: "Mereka pemasangan fotovoltaik, mengoptimumkan susunan panel dan meningkatkan hasil tenaga." }, hollandCodes: ["R", "I", "E"] },
+    { id: 59, title: { en: "Wind Energy Engineer", ms: "Jurutera Tenaga Angin" }, description: { en: "Designs wind turbines, analyses site conditions, and improves turbine performance.", ms: "Mereka turbin angin, menganalisis keadaan tapak dan mempertingkatkan prestasi turbin." }, hollandCodes: ["R", "I", "E"] },
+    { id: 60, title: { en: "Battery Engineer", ms: "Jurutera Bateri" }, description: { en: "Develops battery chemistries, manages thermal systems, and improves energy density.", ms: "Membangunkan kimia bateri, mengurus sistem termal dan meningkatkan ketumpatan tenaga bateri." }, hollandCodes: ["R", "I", "K"] },
+    { id: 61, title: { en: "Energy Systems Analyst", ms: "Penganalisis Sistem Tenaga" }, description: { en: "Models energy demand, evaluates system costs, and proposes efficiency measures.", ms: "Memodelkan permintaan tenaga, menilai kos sistem dan mencadangkan langkah penjimatan tenaga." }, hollandCodes: ["I", "E", "R"] },
+    { id: 62, title: { en: "HVAC Engineer", ms: "Jurutera HVAC" }, description: { en: "Designs heating, ventilation, and air-conditioning systems for buildings.", ms: "Mereka sistem pemanasan, pengudaraan dan penyaman udara untuk bangunan." }, hollandCodes: ["R", "K", "I"] },
+    { id: 63, title: { en: "Biomedical Researcher", ms: "Penyelidik Bioperubatan" }, description: { en: "Investigates biological mechanisms, disease pathways, and develops therapies.", ms: "Menyiasat mekanisme biologi, laluan penyakit dan membangunkan terapi baharu." }, hollandCodes: ["R", "I", "K"] },
+    { id: 64, title: { en: "Clinical Data Manager", ms: "Pengurus Data Klinikal" }, description: { en: "Manages clinical trial data, ensures integrity, and prepares datasets for analysis.", ms: "Mengurus data ujian klinikal, memastikan integriti data dan menyediakan set data untuk analisis." }, hollandCodes: ["K", "S", "I"] },
+    { id: 65, title: { en: "Medical Laboratory Scientist", ms: "Saintis Makmal Perubatan" }, description: { en: "Performs diagnostic tests, analyses samples, and ensures laboratory quality standards.", ms: "Melaksanakan ujian diagnostik, menganalisis sampel dan memastikan piawaian kualiti makmal." }, hollandCodes: ["R", "I", "K"] },
+    { id: 66, title: { en: "Genetic Counselor", ms: "Penasihat Genetik" }, description: { en: "Interprets genetic test results, advises patients, and communicates risk information.", ms: "Mentafsir keputusan ujian genetik, memberi nasihat kepada pesakit dan menyampaikan maklumat risiko dengan jelas." }, hollandCodes: ["S", "I", "K"] },
+    { id: 67, title: { en: "Clinical Pharmacist", ms: "Ahli Farmasi Klinikal" }, description: { en: "Manages medication therapy, advises clinicians, and monitors patient outcomes.", ms: "Mengurus terapi ubat, memberi nasihat kepada pengamal klinikal dan memantau hasil pesakit." }, hollandCodes: ["S", "I", "K"] },
+    { id: 68, title: { en: "Environmental Engineer", ms: "Jurutera Alam Sekitar" }, description: { en: "Designs systems to control pollution, treat wastewater, and remediate contaminated sites.", ms: "Merancang sistem kawalan pencemaran, merawat air sisa dan memulihkan tapak yang tercemar." }, hollandCodes: ["R", "I", "K"] },
+    { id: 69, title: { en: "Waste Management Specialist", ms: "Pakar Pengurusan Sisa" }, description: { en: "Plans waste collection, recycling programs, and sustainable disposal solutions.", ms: "Merancang pengurusan sisa, program kitar semula dan penyelesaian pelupusan yang lestari." }, hollandCodes: ["S", "K", "R"] },
+    { id: 70, title: { en: "Quality Control Inspector", ms: "Pemeriksa Kawalan Kualiti" }, description: { en: "Inspects products, enforces standards, and documents compliance in manufacturing.", ms: "Memeriksa produk, menguatkuasakan piawaian dan mendokumentasikan pematuhan dalam proses pembuatan." }, hollandCodes: ["K", "R", "I"] },
+    { id: 71, title: { en: "Industrial Engineer", ms: "Jurutera Industri" }, description: { en: "Optimises processes, layouts, and workflows to improve productivity and reduce waste.", ms: "Mengoptimumkan proses, susun atur dan aliran kerja untuk meningkatkan produktiviti dan mengurangkan pembaziran." }, hollandCodes: ["E", "R", "K"] },
+    { id: 72, title: { en: "Supply Chain Analyst", ms: "Penganalisis Rantaian Bekalan" }, description: { en: "Analyses logistics data, forecasts demand, and recommends inventory strategies.", ms: "Menganalisis data logistik, meramalkan permintaan dan mencadangkan strategi inventori." }, hollandCodes: ["E", "K", "I"] },
+    { id: 73, title: { en: "Manufacturing Technician", ms: "Juruteknik Pembuatan" }, description: { en: "Operates production equipment, performs setup, and ensures manufacturing tolerances.", ms: "Mengendalikan peralatan pengeluaran, melakukan penyediaan mesin dan memastikan toleransi pembuatan dipatuhi." }, hollandCodes: ["R", "K", "I"] },
+    { id: 74, title: { en: "CNC Machinist", ms: "Operator Mesin CNC" }, description: { en: "Programs and operates CNC machines to produce precision metal and plastic parts.", ms: "Memprogram dan mengendalikan mesin CNC untuk menghasilkan komponen logam dan plastik yang tepat." }, hollandCodes: ["R", "K", "I"] },
+    { id: 75, title: { en: "Automation Engineer", ms: "Jurutera Automasi" }, description: { en: "Designs control systems, PLC programs, and automates industrial processes.", ms: "Mereka sistem kawalan, menulis program PLC dan mengautomasikan proses industri." }, hollandCodes: ["R", "I", "K"] },
+    { id: 76, title: { en: "Instrumentation Engineer", ms: "Jurutera Instrumentasi" }, description: { en: "Designs and maintains sensors, instrumentation, and control systems for plants.", ms: "Mereka dan menyelenggara penderia, instrumentasi dan sistem kawalan bagi loji perindustrian." }, hollandCodes: ["R", "I", "K"] },
+    { id: 77, title: { en: "Technical Writer", ms: "Penulis Teknikal" }, description: { en: "Creates documentation, manuals, and guides to explain technical products and procedures.", ms: "Menghasilkan dokumentasi, manual dan panduan untuk menerangkan produk serta prosedur teknikal secara jelas dan tepat." }, hollandCodes: ["K", "A", "I"] },
+    { id: 78, title: { en: "Science Teacher", ms: "Guru Sains" }, description: { en: "Teaches scientific concepts, prepares lessons, and mentors students in laboratory skills.", ms: "Mengajar konsep sains, menyediakan rancangan pengajaran dan membimbing pelajar dalam kemahiran makmal." }, hollandCodes: ["S", "I", "A"] },
+    { id: 79, title: { en: "University Lecturer", ms: "Pensyarah Universiti" }, description: { en: "Delivers lectures, supervises research, and assesses student learning at tertiary level.", ms: "Menyampaikan kuliah, menyelia penyelidikan dan menilai pembelajaran pelajar di peringkat pengajian tinggi." }, hollandCodes: ["S", "I", "K"] },
+    { id: 80, title: { en: "Science Communicator", ms: "Komunikator Sains" }, description: { en: "Translates complex scientific ideas into accessible media for the public and stakeholders.", ms: "Menterjemah idea saintifik yang kompleks kepada bentuk komunikasi yang mudah difahami oleh orang awam dan pihak berkepentingan." }, hollandCodes: ["A", "S", "I"] }
 ]
 
 export default stemJobs

@@ -6,8 +6,11 @@ import { Toaster } from "@/components/ui/sonner"
 import { SiteFooter } from "@/components/SiteFooter"
 import { Analytics } from "@vercel/analytics/next"
 import VisitorTracker from "@/components/VisitorTracker"
-import ReloadOnResize from "./[locale]/ReloadOnResize"
+import type { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Stem Compass",
+};
 
 export default function RootLayout({
   children,
@@ -23,7 +26,6 @@ export default function RootLayout({
           <NextIntlClientProvider locale={params.locale}>
             <Navbar />
             <Analytics />
-            <ReloadOnResize/>
             <VisitorTracker />
           {children}
             <SiteFooter />

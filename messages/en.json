@@ -67,5 +67,11 @@
     "jobListTitle": "Jobs on the Wheel",
     "hollandLabel": "Holland:",
     "searchOnGoogle": "Search on Google"
+  },
+  "joinForm": {
+    "title": "Enter your 6-digit code",
+    "description": "Join a live Wayground session with friends — type or paste your code below.",
+    "button": "Join Session",
+    "note": "Numbers only. Press Enter to submit when the code is complete."
   }
 }

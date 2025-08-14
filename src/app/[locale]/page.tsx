@@ -124,8 +124,8 @@ export default function Page() {
                 onClick={handleSubmit}
                 disabled={selected.length !== 3}
                 className={`px-6 py-3 text-lg font-semibold ${selected.length === 3
-                        ? "bg-primary text-white dark:text-primary-foreground hover:bg-primary/80"
-                        : "bg-gray-300 text-gray-700 dark:bg-muted dark:text-muted-foreground cursor-not-allowed"
+                    ? "bg-primary text-white dark:text-primary-foreground hover:bg-primary/80"
+                    : "bg-gray-300 text-gray-700 dark:bg-muted dark:text-muted-foreground cursor-not-allowed"
                     }`}
             >
                 {t("sumsit")}

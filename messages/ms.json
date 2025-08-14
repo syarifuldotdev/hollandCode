@@ -67,5 +67,11 @@
     "jobListTitle": "Senarai Kerjaya",
     "hollandLabel": "Kod Holland:",
     "searchOnGoogle": "Cari di Google"
+  },
+  "joinForm": {
+    "title": "Masukkan kod 6 digit anda",
+    "description": "Sertai sesi Wayground secara langsung bersama rakan",
+    "button": "Sertai Sesi",
+    "note": "Hanya nombor dibenarkan. Tekan Enter untuk hantar apabila kod lengkap."
   }
 }

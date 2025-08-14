@@ -32,7 +32,7 @@ export default function WheelPage() {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const wheelRef = useRef<HTMLDivElement | null>(null)
-
+    
     const [rotation, setRotation] = useState(0) // degrees
     const [spinning, setSpinning] = useState(false)
     const [open, setOpen] = useState(false)
@@ -217,7 +217,9 @@ export default function WheelPage() {
         <div className="min-h-screen overflow-x-hidden bg-background text-black dark:text-white transition-colors">
             {/* SR-only live region to announce results (announce job title only) */}
             <div aria-live="polite" className="sr-only">
-                {open && result ? result.title : ""}
+                {open && result ? result.title[locale as "en" | "ms"] : ""}
+
+
             </div>
 
             {/* Header */}
@@ -295,12 +297,14 @@ export default function WheelPage() {
                     <DialogContent className="fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100vw-2rem)] max-w-[640px] max-h-[88svh] p-4 sm:p-6 rounded-2xl shadow-2xl bg-background text-black dark:text-white transition-colors overflow-hidden">
                         <DialogHeader>
                             <DialogTitle className="text-xl sm:text-3xl font-semibold text-center">
-                                {result.title}
+                                {result.title[locale as "en" | "ms"]}
                             </DialogTitle>
                         </DialogHeader>
 
                         <div className="overflow-y-auto max-h-[calc(88svh-7rem)] sm:max-h-[calc(90vh-8rem)] space-y-6">
-                            <p className="leading-relaxed text-base sm:text-lg">{result.description}</p>
+                            <p className="leading-relaxed text-base sm:text-lg">
+                                {result.description[locale as "en" | "ms"]}
+                            </p>
 
                             <div className="space-y-3">
                                 <h3 className="font-semibold">{t("suitableCodes")}</h3>
@@ -337,7 +341,7 @@ export default function WheelPage() {
                                 <Button
                                     variant="secondary"
                                     onClick={() => {
-                                        const query = encodeURIComponent(result.title)
+                                        const query = encodeURIComponent(result.title[locale as "en" | "ms"])
                                         const hl = typeof locale === "string" ? `&hl=${encodeURIComponent(locale)}` : ""
                                         window.open(`https://www.google.com/search?q=${query}${hl}`, "_blank", "noopener")
                                     }}
@@ -362,16 +366,19 @@ export default function WheelPage() {
                             <li key={job.id} className="p-0">
                                 <button
                                     onClick={() => {
-                                        setResult(job)
-                                        setOpen(true)
+                                        setResult(job);
+                                        setOpen(true);
                                     }}
                                     className="w-full text-left p-4 hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-ring rounded-lg border border-border"
-                                    aria-label={`${job.title}. ${t("suitableCodes")}: ${job.hollandCodes.join(", ")}`}
+                                    aria-label={`${job.title[locale as "en" | "ms"]}. ${t("suitableCodes")}: ${job.hollandCodes.join(", ")}`}
                                 >
-                                    <span className="block font-medium text-base">{job.title}</span>
+                                    <span className="block font-medium text-base">
+                                        {job.title[locale as "en" | "ms"]}
+                                    </span>
+
                                     <div className="mt-3 flex flex-wrap gap-2">
                                         {job.hollandCodes.map((code) => {
-                                            const c = code as ValidKey
+                                            const c = code as ValidKey;
                                             return (
                                                 <span
                                                     key={`${job.id}-${c}`}
@@ -380,7 +387,7 @@ export default function WheelPage() {
                                                 >
                                                     {c}
                                                 </span>
-                                            )
+                                            );
                                         })}
                                     </div>
                                 </button>
@@ -389,6 +396,7 @@ export default function WheelPage() {
                     </ul>
                 </div>
             </section>
+
         </div>
     )
 }
