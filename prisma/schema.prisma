@@ -1,0 +1,18 @@
+datasource db {
+  provider = "postgresql" // Supabase/Vercel Postgres/etc.
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Visitor {
+  id         String   @id                      // Stable device ID (cookie-backed)
+  firstSeen  DateTime @default(now())
+  lastSeen   DateTime @updatedAt
+  visits     Int      @default(1)
+  // Optional soft-delete or TTL marker if you plan purges
+  // deletedAt DateTime?
+  @@index([lastSeen])
+}

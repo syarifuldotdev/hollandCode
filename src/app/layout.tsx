@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from "next-intl"
 import { Toaster } from "@/components/ui/sonner"
 import { SiteFooter } from "@/components/SiteFooter"
 import { Analytics } from "@vercel/analytics/next"
+import VisitorTracker from "@/components/VisitorTracker"
 
 
 export default function RootLayout({
@@ -21,6 +22,7 @@ export default function RootLayout({
           <NextIntlClientProvider locale={params.locale}>
             <Navbar />
             <Analytics />
+            <VisitorTracker />
             {children}
             <SiteFooter />
           </NextIntlClientProvider>
