@@ -8,7 +8,6 @@ import stemJobs, { StemJob } from "@/data/stemJobs"
 import { useLocale, useTranslations } from "next-intl"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "sonner"
-import ReloadOnResize from "../ReloadOnResize"
 
 type SelectedTypes = ValidKey[]
 
@@ -216,7 +215,6 @@ export default function WheelPage() {
 
     return (
         <div className="min-h-screen overflow-x-hidden bg-background text-black dark:text-white transition-colors">
-            <ReloadOnResize/>
             {/* SR-only live region to announce results (announce job title only) */}
             <div aria-live="polite" className="sr-only">
                 {open && result ? result.title : ""}
