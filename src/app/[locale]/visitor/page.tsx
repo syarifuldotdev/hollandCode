@@ -1,34 +1,18 @@
 // app/visitor/page.tsx
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 
-export const revalidate = 0; // always fetch fresh count (optional)
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+export const revalidate = 0;
 
 export default async function VisitorPage() {
-    const cookieStore = await cookies();
-
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                getAll() {
-                    return cookieStore.getAll();
-                },
-                setAll(cookiesToSet) {
-                    cookiesToSet.forEach(({ name, value, options }) => {
-                        cookieStore.set(name, value, options);
-                    });
-                },
-            },
-        }
-    );
+    const supabase = await createSupabaseServerClient();
 
     const { count, error } = await supabase
-        .from('visitors')
-        .select('*', { count: 'exact', head: true });
+        .from("visitors")
+        .select("*", { count: "exact", head: true });
 
     if (error) {
+        console.error("Supabase error:", error);
         return (
             <main className="min-h-screen flex items-center justify-center">
                 <p className="text-2xl" role="alert">Error: {error.message}</p>
