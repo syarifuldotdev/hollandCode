@@ -1,4 +1,3 @@
-// app/[locale]/wheel/page.tsx
 "use client"
 
 import colorMap, { ValidKey } from "@/app/constants/colorMap"
@@ -8,6 +7,7 @@ import stemJobs, { StemJob } from "@/data/stemJobs"
 import { useLocale, useTranslations } from "next-intl"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "sonner"
+
 
 type SelectedTypes = ValidKey[]
 
@@ -25,14 +25,13 @@ const hexByType: Record<ValidKey, string> = {
 }
 
 export default function WheelPage() {
-    
     const t = useTranslations("wheel")
     const tTypes = useTranslations("types")
     const locale = useLocale()
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const wheelRef = useRef<HTMLDivElement | null>(null)
-    
+
     const [rotation, setRotation] = useState(0) // degrees
     const [spinning, setSpinning] = useState(false)
     const [open, setOpen] = useState(false)
@@ -45,28 +44,11 @@ export default function WheelPage() {
         typeof window !== "undefined" &&
         window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
 
-    // Prevent scroll during spin (wheel + touch)
+    // Previously this effect prevented page scroll while the wheel was spinning.
+    // Per your request, we no longer block scrolling during spin — this improves UX on mobile
+    // and avoids locking the page while animations run.
     useEffect(() => {
-        const lockScroll = (e: TouchEvent | WheelEvent) => e.preventDefault()
-
-        if (spinning) {
-            document.body.style.overflow = "hidden"
-            document.body.style.touchAction = "none"
-            window.addEventListener("touchmove", lockScroll, { passive: false })
-            window.addEventListener("wheel", lockScroll, { passive: false })
-        } else {
-            document.body.style.overflow = ""
-            document.body.style.touchAction = ""
-            window.removeEventListener("touchmove", lockScroll)
-            window.removeEventListener("wheel", lockScroll)
-        }
-
-        return () => {
-            document.body.style.overflow = ""
-            document.body.style.touchAction = ""
-            window.removeEventListener("touchmove", lockScroll)
-            window.removeEventListener("wheel", lockScroll)
-        }
+        // Intentionally left empty: allow native scroll behavior while spinning.
     }, [spinning])
 
     // Load user's saved 3-letter type
@@ -90,21 +72,32 @@ export default function WheelPage() {
     // Draw wheel (no text to keep performance high even with hundreds of items)
     useEffect(() => {
         const canvas = canvasRef.current
-        const parent = canvas?.parentElement
+        const parent = wheelRef.current // use the wheel wrapper directly
         if (!canvas || !parent || n === 0) return
 
         const dpr = Math.min(window.devicePixelRatio || 1, 2)
 
         const resizeAndDraw = () => {
-            const rect = parent.getBoundingClientRect()
-            const cssSize = Math.max(1, rect.height > 0 ? Math.min(rect.width, rect.height) : rect.width)
+            // Use layout sizes (clientWidth/clientHeight) which are NOT affected by CSS transforms
+            // This prevents rotation changing the axis-aligned bounding box and causing the wheel to resize.
+            const cssWidth = parent.clientWidth || parent.offsetWidth || 0
+            const cssHeight = parent.clientHeight || parent.offsetHeight || 0
+
+            const cssSize = Math.max(1, cssHeight > 0 ? Math.min(cssWidth, cssHeight) : cssWidth)
             const radius = cssSize / 2
 
             // Backing store at DPR size; CSS size stays logical pixels
-            canvas.width = Math.floor(cssSize * dpr)
-            canvas.height = Math.floor(cssSize * dpr)
-            canvas.style.width = `${cssSize}px`
-            canvas.style.height = `${cssSize}px`
+            const backingWidth = Math.max(1, Math.floor(cssSize * dpr))
+            const backingHeight = Math.max(1, Math.floor(cssSize * dpr))
+
+            if (canvas.width !== backingWidth || canvas.height !== backingHeight) {
+                canvas.width = backingWidth
+                canvas.height = backingHeight
+            }
+
+            // Set CSS size as integer pixels to avoid fractional layout jitter
+            canvas.style.width = `${Math.floor(cssSize)}px`
+            canvas.style.height = `${Math.floor(cssSize)}px`
 
             const ctx = canvas.getContext("2d")
             if (!ctx) return
@@ -185,6 +178,7 @@ export default function WheelPage() {
         const wheelEl = wheelRef.current
         if (!wheelEl) return
 
+        // Use an explicit property so we don't stomp on user's inline styles unexpectedly
         wheelEl.style.transition = `transform ${duration}ms cubic-bezier(0.22, 0.61, 0.36, 1)`
         // Force reflow before applying transform
         void wheelEl.offsetWidth
@@ -218,8 +212,6 @@ export default function WheelPage() {
             {/* SR-only live region to announce results (announce job title only) */}
             <div aria-live="polite" className="sr-only">
                 {open && result ? result.title[locale as "en" | "ms"] : ""}
-
-
             </div>
 
             {/* Header */}
@@ -366,8 +358,8 @@ export default function WheelPage() {
                             <li key={job.id} className="p-0">
                                 <button
                                     onClick={() => {
-                                        setResult(job);
-                                        setOpen(true);
+                                        setResult(job)
+                                        setOpen(true)
                                     }}
                                     className="w-full text-left p-4 hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-ring rounded-lg border border-border"
                                     aria-label={`${job.title[locale as "en" | "ms"]}. ${t("suitableCodes")}: ${job.hollandCodes.join(", ")}`}
@@ -378,7 +370,7 @@ export default function WheelPage() {
 
                                     <div className="mt-3 flex flex-wrap gap-2">
                                         {job.hollandCodes.map((code) => {
-                                            const c = code as ValidKey;
+                                            const c = code as ValidKey
                                             return (
                                                 <span
                                                     key={`${job.id}-${c}`}
@@ -387,7 +379,7 @@ export default function WheelPage() {
                                                 >
                                                     {c}
                                                 </span>
-                                            );
+                                            )
                                         })}
                                     </div>
                                 </button>
