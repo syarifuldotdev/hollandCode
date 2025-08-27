@@ -1,9 +1,8 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient, User as PrismaUser } from "@prisma/client";
+// Import the singleton prisma client from our shared file
+import { prisma } from "@/lib/prisma";
 import { type DefaultSession, type NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-
-const prisma = new PrismaClient();
 
 /**
  * ## Module Augmentation for NextAuth
@@ -34,7 +33,7 @@ declare module "next-auth/jwt" {
 }
 
 export const authOptions: NextAuthOptions = {
-    // Use PrismaAdapter to automatically handle user accounts in the database.
+    // Use the imported singleton prisma instance with PrismaAdapter.
     adapter: PrismaAdapter(prisma),
 
     // Set the session strategy to JWT for stateless sessions.
@@ -68,6 +67,7 @@ export const authOptions: NextAuthOptions = {
                 return token;
             }
 
+            // Use the imported singleton prisma instance here as well.
             const dbUser = await prisma.user.findUnique({
                 where: { id: token.sub },
             });
