@@ -104,11 +104,6 @@ export default function QuizPage() {
                     />
                 </div>
             </section>
-            {/* <section className="min-h-screen flex items-center justify-center px-4 bg-background snap-start">
-                <div className="w-full max-w-md rounded-lg border border-border bg-card/50 p-6">
-                    <JoinWaygroundByCode />
-                </div>
-            </section> */}
         </main>
     );
 }
