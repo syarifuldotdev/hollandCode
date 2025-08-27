@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/SiteFooter"
 import { Analytics } from "@vercel/analytics/next"
 import VisitorTracker from "@/components/VisitorTracker"
 import type { Metadata } from "next";
+import AuthProvider from "@/components/providers/auth-provider"
 
 export const metadata: Metadata = {
   title: "Stem Compass",
@@ -24,11 +25,13 @@ export default function RootLayout({
       <body className="min-h-screen bg-background text-foreground antialiased" suppressHydrationWarning>
         <ThemeProvider attribute="class">
           <NextIntlClientProvider locale={params.locale}>
-            <Navbar />
             <Analytics />
             <VisitorTracker />
-          {children}
-            <SiteFooter />
+            <AuthProvider>
+              <Navbar />
+              {children}
+              <SiteFooter />
+            </AuthProvider>
           </NextIntlClientProvider>
         </ThemeProvider>
         <Toaster />

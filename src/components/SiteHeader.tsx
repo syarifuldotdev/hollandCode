@@ -1,14 +1,37 @@
-"use client"
+"use client";
 
-import { ModeToggle } from "@/components/mode-toggle"
-import { ColorWheelIcon, Component2Icon, HomeIcon } from "@radix-ui/react-icons"
-import Link from "next/link"
-import { FC } from "react"
-import { LocaleToggle } from "./LocaleToggle"
-
+import { ModeToggle } from "@/components/mode-toggle";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import { ColorWheelIcon, Component2Icon, HomeIcon } from "@radix-ui/react-icons";
+import { signIn, signOut, useSession } from "next-auth/react";
+import Link from "next/link";
+import { FC, useState } from "react";
+import { LocaleToggle } from "./LocaleToggle";
 
 const Navbar: FC = () => {
+    const { data: session, status } = useSession();
+    const isLoading = status === "loading";
+    const isAuthed = status === "authenticated";
+    const [open, setOpen] = useState(false);
 
+    const name = session?.user?.name ?? "";
+    const email = session?.user?.email ?? "";
+    const image = session?.user?.image ?? "";
+
+    const initials =
+        name
+            ?.split(" ")
+            .map((n) => n[0])
+            .join("")
+            .slice(0, 2)
+            .toUpperCase() || "U";
 
     return (
         <div className="fixed top-0 left-0 right-0 z-40 bg-base-300 bg-opacity-20 backdrop-blur-lg drop-shadow-xl">
@@ -18,34 +41,97 @@ const Navbar: FC = () => {
                     <Link
                         href="/"
                         className="flex items-center gap-1 text-sm text-primary font-semibold hover:underline underline-offset-4"
+                        aria-label="Home"
                     >
                         <HomeIcon className="w-4 h-4" />
-
                     </Link>
                     <Link
                         href="/wheel"
                         className="flex items-center gap-1 text-sm text-primary font-semibold hover:underline underline-offset-4"
+                        aria-label="Color wheel"
                     >
                         <ColorWheelIcon className="w-4 h-4" />
-
                     </Link>
                     <Link
                         href="/quiz"
                         className="flex items-center gap-1 text-sm text-primary font-semibold hover:underline underline-offset-4"
+                        aria-label="Quiz"
                     >
                         <Component2Icon className="w-4 h-4" />
-
                     </Link>
                 </div>
 
-                {/* 🎛️ Top right: Language + Theme */}
+                {/* 🎛️ Top right: Locale, Theme, Auth */}
                 <div className="flex items-center gap-2">
                     <LocaleToggle />
                     <ModeToggle />
+
+                    {/* Auth area */}
+                    {isLoading ? (
+                        <div className="w-8 h-8 rounded-full bg-muted animate-pulse" aria-hidden />
+                    ) : isAuthed ? (
+                        <DropdownMenu open={open} onOpenChange={setOpen}>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    className="p-0 w-9 h-9 rounded-full overflow-hidden focus-visible:ring-2 focus-visible:ring-primary"
+                                    aria-label="Open profile menu"
+                                >
+                                    <Avatar className="w-9 h-9">
+                                        <AvatarImage src={image} alt={name || email || "User"} />
+                                        <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+                                    </Avatar>
+                                </Button>
+                            </DropdownMenuTrigger>
+
+                            <DropdownMenuContent align="end" className="w-64">
+                                <div className="px-2 py-2">
+                                    <div className="flex items-center gap-3">
+                                        <Avatar className="w-10 h-10">
+                                            <AvatarImage src={image} alt={name || email || "User"} />
+                                            <AvatarFallback>{initials}</AvatarFallback>
+                                        </Avatar>
+                                        <div className="min-w-0">
+                                            <p className="text-sm font-medium leading-tight truncate">{name || "User"}</p>
+                                            <p className="text-xs text-muted-foreground truncate">{email || "—"}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* 
+                                <DropdownMenuSeparator />
+
+                                <DropdownMenuItem asChild className="cursor-pointer">
+                                    <Link href="/profile">Profile</Link>
+                                </DropdownMenuItem>
+
+                                <DropdownMenuItem asChild className="cursor-pointer">
+                                    <Link href="/settings">Settings</Link>
+                                </DropdownMenuItem>
+
+                                <DropdownMenuSeparator /> */}
+
+                                <DropdownMenuItem
+                                    className="cursor-pointer text-destructive"
+                                    onClick={() => signOut()}
+                                >
+                                    Log out
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    ) : (
+                        <Button
+                            variant="outline"
+                            onClick={() => signIn("google")}
+                            className="text-sm font-semibold"
+                            aria-label="Sign in with Google"
+                        >
+                            Sign in
+                        </Button>
+                    )}
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Navbar
+export default Navbar;

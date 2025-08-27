@@ -1,234 +1,228 @@
-"use client"
+// src/app/[locale]/wheel/page.tsx
+"use client";
 
-import colorMap, { ValidKey } from "@/app/constants/colorMap"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import stemJobs, { StemJob } from "@/data/stemJobs"
-import { useLocale, useTranslations } from "next-intl"
-import { useEffect, useMemo, useRef, useState } from "react"
-import { toast } from "sonner"
+import colorMap, { ValidKey } from "@/app/constants/colorMap";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import stemJobs, { StemJob } from "@/data/stemJobs";
+import { useLocale, useTranslations } from "next-intl";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
+type SelectedTypes = ValidKey[];
+const STORAGE_KEY = "hollandSelections";
+const KEYS: ValidKey[] = ["R", "I", "A", "S", "E", "K"];
 
-type SelectedTypes = ValidKey[]
-
-const STORAGE_KEY = "selectedTypes"
-const KEYS: ValidKey[] = ["R", "I", "A", "S", "E", "K"]
-
-// Tailwind 500 hex values to roughly match colorMap tokens
 const hexByType: Record<ValidKey, string> = {
-    R: "#ef4444", // red-500
-    I: "#3b82f6", // blue-500
-    A: "#a855f7", // purple-500
-    S: "#22c55e", // green-500
-    E: "#eab308", // yellow-500
-    K: "#14b8a6", // teal-500
-}
+    R: "#ef4444",
+    I: "#3b82f6",
+    A: "#a855f7",
+    S: "#22c55e",
+    E: "#eab308",
+    K: "#14b8a6",
+};
 
 export default function WheelPage() {
-    const t = useTranslations("wheel")
-    const tTypes = useTranslations("types")
-    const locale = useLocale()
+    const t = useTranslations("wheel");
+    const tTypes = useTranslations("types");
+    const locale = useLocale();
+    const { data: session, status } = useSession();
 
-    const canvasRef = useRef<HTMLCanvasElement | null>(null)
-    const wheelRef = useRef<HTMLDivElement | null>(null)
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const wheelRef = useRef<HTMLDivElement | null>(null);
 
-    const [rotation, setRotation] = useState(0) // degrees
-    const [spinning, setSpinning] = useState(false)
-    const [open, setOpen] = useState(false)
-    const [result, setResult] = useState<StemJob | null>(null)
-    const [selectedTypes, setSelectedTypes] = useState<SelectedTypes>([])
-    const [jobs, setJobs] = useState<StemJob[]>(() => stemJobs)
+    const [rotation, setRotation] = useState(0);
+    const [spinning, setSpinning] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [result, setResult] = useState<StemJob | null>(null);
+    const [selectedTypes, setSelectedTypes] = useState<SelectedTypes>([]);
+    const [jobs, setJobs] = useState<StemJob[]>(() => stemJobs);
 
-    // Respect reduced motion
     const prefersReducedMotion =
         typeof window !== "undefined" &&
-        window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
+        window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
 
-    // Previously this effect prevented page scroll while the wheel was spinning.
-    // Per your request, we no longer block scrolling during spin — this improves UX on mobile
-    // and avoids locking the page while animations run.
     useEffect(() => {
-        // Intentionally left empty: allow native scroll behavior while spinning.
-    }, [spinning])
-
-    // Load user's saved 3-letter type
-    useEffect(() => {
-        try {
-            const saved = localStorage.getItem(STORAGE_KEY)
-            if (!saved) return
-            const parsed = JSON.parse(saved)
-            if (Array.isArray(parsed)) {
-                const valid = parsed.filter((x: string): x is ValidKey => KEYS.includes(x as ValidKey))
-                setSelectedTypes(valid.slice(0, 3))
-            }
-        } catch {
-            // ignore parse errors
+        if (status === 'loading') {
+            return;
         }
-    }, [])
 
-    const n = jobs.length
-    const anglePer = useMemo(() => (n > 0 ? 360 / n : 0), [n])
+        let loadedCodes: string[] = [];
 
-    // Draw wheel (no text to keep performance high even with hundreds of items)
+        if (status === 'authenticated') {
+            // FIX: Safely access hollandCodes with `?.` and provide an empty array `[]` as a
+            // fallback using the nullish coalescing operator `??` to prevent type errors.
+            loadedCodes = session?.user?.hollandCodes ?? [];
+        } else if (status === 'unauthenticated') {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed)) {
+                        loadedCodes = parsed;
+                    }
+                }
+            } catch {
+                // Ignore parse errors, loadedCodes remains []
+            }
+        }
+
+        if (loadedCodes.length > 0) {
+            const valid = loadedCodes.filter((x: string): x is ValidKey =>
+                KEYS.includes(x as ValidKey)
+            );
+            setSelectedTypes(valid.slice(0, 3));
+        }
+    }, [status, session]);
+
+
+    const n = jobs.length;
+    const anglePer = useMemo(() => (n > 0 ? 360 / n : 0), [n]);
+
+    // --- The rest of the component remains the same ---
     useEffect(() => {
-        const canvas = canvasRef.current
-        const parent = wheelRef.current // use the wheel wrapper directly
-        if (!canvas || !parent || n === 0) return
+        const canvas = canvasRef.current;
+        const parent = wheelRef.current;
+        if (!canvas || !parent || n === 0) return;
 
-        const dpr = Math.min(window.devicePixelRatio || 1, 2)
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
         const resizeAndDraw = () => {
-            // Use layout sizes (clientWidth/clientHeight) which are NOT affected by CSS transforms
-            // This prevents rotation changing the axis-aligned bounding box and causing the wheel to resize.
-            const cssWidth = parent.clientWidth || parent.offsetWidth || 0
-            const cssHeight = parent.clientHeight || parent.offsetHeight || 0
+            const cssWidth = parent.clientWidth || parent.offsetWidth || 0;
+            const cssHeight = parent.clientHeight || parent.offsetHeight || 0;
+            const cssSize = Math.max(1, cssHeight > 0 ? Math.min(cssWidth, cssHeight) : cssWidth);
+            const radius = cssSize / 2;
 
-            const cssSize = Math.max(1, cssHeight > 0 ? Math.min(cssWidth, cssHeight) : cssWidth)
-            const radius = cssSize / 2
-
-            // Backing store at DPR size; CSS size stays logical pixels
-            const backingWidth = Math.max(1, Math.floor(cssSize * dpr))
-            const backingHeight = Math.max(1, Math.floor(cssSize * dpr))
-
+            const backingWidth = Math.max(1, Math.floor(cssSize * dpr));
+            const backingHeight = Math.max(1, Math.floor(cssSize * dpr));
             if (canvas.width !== backingWidth || canvas.height !== backingHeight) {
-                canvas.width = backingWidth
-                canvas.height = backingHeight
+                canvas.width = backingWidth;
+                canvas.height = backingHeight;
             }
 
-            // Set CSS size as integer pixels to avoid fractional layout jitter
-            canvas.style.width = `${Math.floor(cssSize)}px`
-            canvas.style.height = `${Math.floor(cssSize)}px`
+            canvas.style.width = `${Math.floor(cssSize)}px`;
+            canvas.style.height = `${Math.floor(cssSize)}px`;
 
-            const ctx = canvas.getContext("2d")
-            if (!ctx) return
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return;
 
-            ctx.resetTransform()
-            ctx.scale(dpr, dpr)
-            ctx.clearRect(0, 0, cssSize, cssSize)
-            ctx.translate(radius, radius)
+            ctx.resetTransform();
+            ctx.scale(dpr, dpr);
+            ctx.clearRect(0, 0, cssSize, cssSize);
+            ctx.translate(radius, radius);
 
-            const startOffset = -Math.PI / 2
+            const startOffset = -Math.PI / 2;
+
             for (let i = 0; i < n; i++) {
-                const start = startOffset + (i * 2 * Math.PI) / n
-                const end = startOffset + ((i + 1) * 2 * Math.PI) / n
-                const code = jobs[i].hollandCodes?.[0] as ValidKey | undefined
-                const fill = (code && hexByType[code]) || "#9ca3af"
+                const start = startOffset + (i * 2 * Math.PI) / n;
+                const end = startOffset + ((i + 1) * 2 * Math.PI) / n;
+                const code = jobs[i].hollandCodes?.[0] as ValidKey | undefined;
+                const fill = (code && hexByType[code]) || "#9ca3af";
 
-                // Sector
-                ctx.beginPath()
-                ctx.moveTo(0, 0)
-                ctx.arc(0, 0, radius, start, end)
-                ctx.closePath()
-                ctx.fillStyle = fill
-                ctx.fill()
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, radius, start, end);
+                ctx.closePath();
+                ctx.fillStyle = fill;
+                ctx.fill();
 
-                // Separator (radial line)
-                ctx.save()
-                ctx.strokeStyle = "rgba(0,0,0,0.12)"
-                ctx.lineWidth = 1
-                ctx.beginPath()
-                ctx.moveTo(0, 0)
-                ctx.lineTo(radius * Math.cos(start), radius * Math.sin(start))
-                ctx.stroke()
-                ctx.restore()
+                ctx.save();
+                ctx.strokeStyle = "rgba(0,0,0,0.12)";
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(radius * Math.cos(start), radius * Math.sin(start));
+                ctx.stroke();
+                ctx.restore();
             }
 
-            // Outer ring for definition
-            ctx.save()
-            ctx.strokeStyle = "rgba(0,0,0,0.15)"
-            ctx.lineWidth = 1
-            ctx.beginPath()
-            ctx.arc(0, 0, radius - 0.5, 0, 2 * Math.PI)
-            ctx.stroke()
-            ctx.restore()
+            ctx.save();
+            ctx.strokeStyle = "rgba(0,0,0,0.15)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(0, 0, radius - 0.5, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.restore();
 
-            // Center hub
-            ctx.beginPath()
-            ctx.arc(0, 0, radius * 0.08, 0, 2 * Math.PI)
-            ctx.fillStyle = "#111827"
-            ctx.fill()
-        }
+            ctx.beginPath();
+            ctx.arc(0, 0, radius * 0.08, 0, 2 * Math.PI);
+            ctx.fillStyle = "#111827";
+            ctx.fill();
+        };
 
-        resizeAndDraw()
+        resizeAndDraw();
 
-        const observer = new ResizeObserver(resizeAndDraw)
-        observer.observe(parent)
-
-        // Also listen to viewport changes so vmin/clamp-based widths redraw correctly
-        window.addEventListener("resize", resizeAndDraw)
+        const observer = new ResizeObserver(resizeAndDraw);
+        observer.observe(parent);
+        window.addEventListener("resize", resizeAndDraw);
 
         return () => {
-            observer.disconnect()
-            window.removeEventListener("resize", resizeAndDraw)
-        }
-    }, [jobs, n])
+            observer.disconnect();
+            window.removeEventListener("resize", resizeAndDraw);
+        };
+    }, [jobs, n]);
 
     const onSpin = () => {
-        if (spinning) return
-        if (n === 0) return // button is disabled when n === 0; no extra toast key available
-        setSpinning(true)
+        if (spinning || n === 0) return;
+        setSpinning(true);
 
-        const targetIndex = Math.floor(Math.random() * n)
-        const spins = prefersReducedMotion ? 0 : 4 + Math.floor(Math.random() * 3) // 4–6 rotations
-        const duration = prefersReducedMotion ? 300 : 3200
+        const targetIndex = Math.floor(Math.random() * n);
+        const spins = prefersReducedMotion ? 0 : 4 + Math.floor(Math.random() * 3);
+        const duration = prefersReducedMotion ? 300 : 3200;
 
-        // Align the center of targetIndex to the top (pointer)
-        const final = spins * 360 - (targetIndex + 0.5) * anglePer
+        const final = spins * 360 - (targetIndex + 0.5) * anglePer;
+        const wheelEl = wheelRef.current;
+        if (!wheelEl) return;
 
-        const wheelEl = wheelRef.current
-        if (!wheelEl) return
-
-        // Use an explicit property so we don't stomp on user's inline styles unexpectedly
-        wheelEl.style.transition = `transform ${duration}ms cubic-bezier(0.22, 0.61, 0.36, 1)`
-        // Force reflow before applying transform
-        void wheelEl.offsetWidth
-
-        setRotation(final)
+        wheelEl.style.transition = `transform ${duration}ms cubic-bezier(0.22, 0.61, 0.36, 1)`;
+        void wheelEl.offsetWidth;
+        setRotation(final);
 
         const handleEnd = () => {
-            wheelEl.removeEventListener("transitionend", handleEnd)
-            wheelEl.style.transition = ""
-            // Normalize rotation
-            const normalized = ((final % 360) + 360) % 360
-            setRotation(normalized)
+            wheelEl.removeEventListener("transitionend", handleEnd);
+            wheelEl.style.transition = "";
 
-            const picked = jobs[targetIndex]
-            setResult(picked)
-            setOpen(true)
-            setSpinning(false)
-        }
+            const normalized = ((final % 360) + 360) % 360;
+            setRotation(normalized);
 
-        wheelEl.addEventListener("transitionend", handleEnd)
-    }
+            const picked = jobs[targetIndex];
+            setResult(picked);
+            setOpen(true);
+            setSpinning(false);
+        };
+
+        wheelEl.addEventListener("transitionend", handleEnd);
+    };
 
     const matchCount = useMemo(() => {
-        if (!result || selectedTypes.length === 0) return 0
-        const set = new Set(selectedTypes)
-        return result.hollandCodes.reduce((acc, c) => acc + (set.has(c as ValidKey) ? 1 : 0), 0)
-    }, [result, selectedTypes])
+        if (!result || selectedTypes.length === 0) return 0;
+        const set = new Set(selectedTypes);
+        return result.hollandCodes.reduce(
+            (acc, c) => acc + (set.has(c as ValidKey) ? 1 : 0),
+            0
+        );
+    }, [result, selectedTypes]);
 
     return (
         <div className="min-h-screen overflow-x-hidden bg-background text-black dark:text-white transition-colors">
-            {/* SR-only live region to announce results (announce job title only) */}
             <div aria-live="polite" className="sr-only">
                 {open && result ? result.title[locale as "en" | "ms"] : ""}
             </div>
 
-            {/* Header */}
             <section className="flex flex-col items-center justify-center gap-3 px-4 py-12 text-center">
                 <h1 className="text-3xl sm:text-4xl font-bold text-primary">{t("wheelTitle")}</h1>
                 <p className="text-muted-foreground">{t("wheelTips")}</p>
                 {selectedTypes.length === 3 && (
                     <p className="text-sm text-muted-foreground">
-                        {t("savedType")} <span className="font-semibold">{selectedTypes.join(" ")}</span>
+                        {t("savedType")}{" "}
+                        <span className="font-semibold">{selectedTypes.join(" ")}</span>
                     </p>
                 )}
             </section>
 
-            {/* Wheel */}
             <section className="flex flex-col items-center gap-6">
                 <div className="relative flex justify-center items-center">
-                    {/* Pointer */}
                     <div
                         aria-hidden
                         className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none"
@@ -236,7 +230,6 @@ export default function WheelPage() {
                         <div className="w-0 h-0 border-l-8 border-r-8 border-t-12 border-l-transparent border-r-transparent border-t-rose-500 drop-shadow" />
                     </div>
 
-                    {/* Rotating wheel */}
                     <div
                         ref={wheelRef}
                         style={{ transform: `rotate(${rotation}deg)` }}
@@ -250,13 +243,11 @@ export default function WheelPage() {
                     </div>
                 </div>
 
-                {/* Buttons */}
                 <div className="flex items-center gap-3">
                     <Button
                         onClick={onSpin}
                         disabled={spinning || n === 0}
                         aria-busy={spinning}
-                        aria-disabled={spinning || n === 0}
                         className={spinning ? "opacity-60 cursor-not-allowed" : ""}
                     >
                         {spinning ? t("spinning") : t("spin")}
@@ -266,16 +257,16 @@ export default function WheelPage() {
                         variant="secondary"
                         disabled={spinning}
                         onClick={() => {
-                            if (spinning) return
+                            if (spinning) return;
                             setJobs((prev) => {
-                                const copy = [...prev]
+                                const copy = [...prev];
                                 for (let i = copy.length - 1; i > 0; i--) {
-                                    const j = Math.floor(Math.random() * (i + 1))
-                                        ;[copy[i], copy[j]] = [copy[j], copy[i]]
+                                    const j = Math.floor(Math.random() * (i + 1));
+                                    [copy[i], copy[j]] = [copy[j], copy[i]];
                                 }
-                                return copy
-                            })
-                            toast.success(t("shuffleSuccess"))
+                                return copy;
+                            });
+                            toast.success(t("shuffleSuccess"));
                         }}
                     >
                         {t("shuffle")}
@@ -283,7 +274,6 @@ export default function WheelPage() {
                 </div>
             </section>
 
-            {/* Modal */}
             {open && result && (
                 <Dialog open={open} onOpenChange={setOpen}>
                     <DialogContent className="fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100vw-2rem)] max-w-[640px] max-h-[88svh] p-4 sm:p-6 rounded-2xl shadow-2xl bg-background text-black dark:text-white transition-colors overflow-hidden">
@@ -302,9 +292,9 @@ export default function WheelPage() {
                                 <h3 className="font-semibold">{t("suitableCodes")}</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {result.hollandCodes.map((code) => {
-                                        const c = code as ValidKey
-                                        const cls = colorMap[c]
-                                        const label = tTypes(`${c}.label`)
+                                        const c = code as ValidKey;
+                                        const cls = colorMap[c];
+                                        const label = tTypes(`${c}.label`);
                                         return (
                                             <span
                                                 key={c}
@@ -314,7 +304,7 @@ export default function WheelPage() {
                                                 <strong>{c}</strong>
                                                 <span className="opacity-90">{label}</span>
                                             </span>
-                                        )
+                                        );
                                     })}
                                 </div>
 
@@ -333,9 +323,9 @@ export default function WheelPage() {
                                 <Button
                                     variant="secondary"
                                     onClick={() => {
-                                        const query = encodeURIComponent(result.title[locale as "en" | "ms"])
-                                        const hl = typeof locale === "string" ? `&hl=${encodeURIComponent(locale)}` : ""
-                                        window.open(`https://www.google.com/search?q=${query}${hl}`, "_blank", "noopener")
+                                        const query = encodeURIComponent(result.title[locale as "en" | "ms"]);
+                                        const hl = typeof locale === "string" ? `&hl=${encodeURIComponent(locale)}` : "";
+                                        window.open(`https://www.google.com/search?q=${query}${hl}`, "_blank", "noopener");
                                     }}
                                 >
                                     {t("searchOnGoogle")}
@@ -346,31 +336,27 @@ export default function WheelPage() {
                 </Dialog>
             )}
 
-            {/* Job List */}
             <section className="w-full px-4 sm:px-6 lg:px-8 mt-10 mb-10 flex justify-center">
                 <div className="w-full max-w-6xl">
                     <h2 className="text-2xl sm:text-4xl font-semibold mb-4 text-center">
                         {t("jobListTitle")}
                     </h2>
-
                     <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 text-sm">
                         {jobs.map((job) => (
                             <li key={job.id} className="p-0">
                                 <button
                                     onClick={() => {
-                                        setResult(job)
-                                        setOpen(true)
+                                        setResult(job);
+                                        setOpen(true);
                                     }}
                                     className="w-full text-left p-4 hover:bg-muted transition-colors focus:outline-none focus:ring-2 focus:ring-ring rounded-lg border border-border"
-                                    aria-label={`${job.title[locale as "en" | "ms"]}. ${t("suitableCodes")}: ${job.hollandCodes.join(", ")}`}
                                 >
                                     <span className="block font-medium text-base">
                                         {job.title[locale as "en" | "ms"]}
                                     </span>
-
                                     <div className="mt-3 flex flex-wrap gap-2">
                                         {job.hollandCodes.map((code) => {
-                                            const c = code as ValidKey
+                                            const c = code as ValidKey;
                                             return (
                                                 <span
                                                     key={`${job.id}-${c}`}
@@ -379,7 +365,7 @@ export default function WheelPage() {
                                                 >
                                                     {c}
                                                 </span>
-                                            )
+                                            );
                                         })}
                                     </div>
                                 </button>
@@ -388,7 +374,6 @@ export default function WheelPage() {
                     </ul>
                 </div>
             </section>
-
         </div>
-    )
+    );
 }
