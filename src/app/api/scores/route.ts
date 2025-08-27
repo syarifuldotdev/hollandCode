@@ -1,24 +1,7 @@
-// src/lib/prisma.ts or a similar shared location
-import { PrismaClient } from "@prisma/client";
-
-// This is a global variable that is not affected by Next.js hot reload
-// It ensures only one instance of the PrismaClient is created.
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
-
-export const prisma =
-    globalForPrisma.prisma ||
-    new PrismaClient({
-        log: ["query", "info", "warn", "error"],
-    });
-
-if (process.env.NODE_ENV !== "production") {
-    globalForPrisma.prisma = prisma;
-}
-
-// src/app/api/scores/route.ts
 import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma"; // Correctly import the singleton Prisma client
 
 interface ScoreRequestBody {
     score: number;
