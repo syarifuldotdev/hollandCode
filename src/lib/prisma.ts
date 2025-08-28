@@ -18,13 +18,13 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 // If an instance already exists in the global object, we use it.
 // Otherwise, we create a new one.
 export const prisma =
-    globalForPrisma.prisma ||
-    new PrismaClient({
-        // Optional: log database queries for debugging purposes.
-        log: ["query", "info", "warn", "error"],
-    });
+globalForPrisma.prisma ||
+new PrismaClient({
+    // Optional: log database queries for debugging purposes.
+    log: ["query", "info", "warn", "error"],
+});
 
 // In a non-production environment, we save the instance to the global object.
 if (process.env.NODE_ENV !== "production") {
-    globalForPrisma.prisma = prisma;
+globalForPrisma.prisma = prisma;
 }

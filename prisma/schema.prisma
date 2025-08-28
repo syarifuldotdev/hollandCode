@@ -64,14 +64,16 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// Model to store quiz scores
 model Score {
   id        String   @id @default(cuid())
   userId    String
-  userName  String? // Added field to store the user's name
+  userName  String?
   quizId    String
   score     Int
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // 🆕 This generates `userId_quizId` in the type-safe client
+  @@unique([userId, quizId], name: "userId_quizId")
 }
