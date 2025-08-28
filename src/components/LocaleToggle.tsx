@@ -11,6 +11,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from "./ui/dropdown-menu";
+import { useSession } from "next-auth/react";
 
 const SUPPORTED_LOCALES = ["en", "ms"] as const;
 type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
@@ -19,25 +20,31 @@ export const LocaleToggle: FC = () => {
     const locale = useLocale() as SupportedLocale;
     const router = useRouter();
     const pathname = usePathname();
+    const { data: session } = useSession();
 
-    const switchLocale = (next: SupportedLocale) => {
+    const switchLocale = async (next: SupportedLocale) => {
         if (!next || next === locale) return;
 
-        // Split current path
+        // Save to DB if logged in
+        if (session?.user?.id) {
+            await fetch("/api/user/profile", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ language: next }),
+            });
+        }
+
+        // Navigate
         const parts = pathname.split("/").filter(Boolean);
         const hasLocaleSegment = SUPPORTED_LOCALES.includes(parts[0] as SupportedLocale);
-
-        // Replace or insert locale in the path
         const nextParts = hasLocaleSegment
             ? [next, ...parts.slice(1)]
             : [next, ...parts];
         const nextPath = "/" + nextParts.join("/");
 
-        // Keep current query params and hash
         const search = typeof window !== "undefined" ? window.location.search : "";
         const hash = typeof window !== "undefined" ? window.location.hash : "";
 
-        // Navigate to new locale and refresh content
         router.replace(`${nextPath}${search}${hash}`);
         router.refresh();
     };
@@ -45,11 +52,7 @@ export const LocaleToggle: FC = () => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button
-                    variant="ghost"
-                    className="w-9 px-0"
-                    aria-label="Select language"
-                >
+                <Button variant="ghost" className="w-9 px-0" aria-label="Select language">
                     <GlobeIcon className="h-[1.2rem] w-[1.2rem]" />
                 </Button>
             </DropdownMenuTrigger>

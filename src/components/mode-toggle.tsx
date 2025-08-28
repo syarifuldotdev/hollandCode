@@ -9,9 +9,22 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
+import { useSession } from "next-auth/react"
 
 export function ModeToggle() {
     const { setTheme } = useTheme()
+    const { data: session } = useSession()
+
+    const changeTheme = async (theme: string) => {
+        setTheme(theme) // instant local change
+        if (session?.user?.id) {
+            await fetch("/api/user/profile", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ theme }),
+            })
+        }
+    }
 
     return (
         <DropdownMenu>
@@ -26,9 +39,9 @@ export function ModeToggle() {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => changeTheme("light")}>Light</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => changeTheme("dark")}>Dark</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => changeTheme("system")}>System</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     )
