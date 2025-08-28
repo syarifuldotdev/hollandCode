@@ -1,4 +1,4 @@
-
+// src/app/[locale]/layout.tsx
 import "@/app/globals.css"
 import Navbar from "@/components/SiteHeader"
 import { ThemeProvider } from "@/context/themeProvider"
@@ -14,18 +14,20 @@ export const metadata: Metadata = {
     title: "Stem Compass",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
-    params,
+    params
 }: {
-    children: React.ReactNode
-    params: { locale: string }
+    children: React.ReactNode;
+    params: Promise<{ locale: string }>;
 }) {
+    const { locale } = await params;
+
     return (
-        <html lang={params.locale} suppressHydrationWarning>
+        <html lang={locale} suppressHydrationWarning>
             <body className="min-h-screen bg-background text-foreground antialiased" suppressHydrationWarning>
                 <ThemeProvider attribute="class">
-                    <NextIntlClientProvider locale={params.locale}>
+                    <NextIntlClientProvider locale={locale}>
                         <Analytics />
                         <VisitorTracker />
                         <AuthProvider>
@@ -38,5 +40,5 @@ export default function RootLayout({
                 <Toaster />
             </body>
         </html>
-    )
+    );
 }
