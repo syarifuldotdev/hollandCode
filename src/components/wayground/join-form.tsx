@@ -1,15 +1,14 @@
 // components/wayground/join-form.tsx
 "use client";
 
-import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
     InputOTP,
     InputOTPGroup,
-    InputOTPSlot,
-    InputOTPSeparator,
+    InputOTPSlot
 } from "@/components/ui/input-otp";
 import { useTranslations } from "next-intl";
+import { useMemo, useState } from "react";
 
 const WAYGROUND_JOIN_URL = "https://wayground.com/join?gc=";
 
